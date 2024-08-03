@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class BloodGroupSelectionScreen extends StatefulWidget {
   @override
-  _BloodGroupSelectionScreenState createState() =>
-      _BloodGroupSelectionScreenState();
+  _BloodGroupSelectionScreenState createState() => _BloodGroupSelectionScreenState();
 }
 
-class _BloodGroupSelectionScreenState
-    extends State<BloodGroupSelectionScreen> {
+class _BloodGroupSelectionScreenState extends State<BloodGroupSelectionScreen> {
   String? selectedGroup;
   String? selectedRhesus;
 
@@ -51,12 +49,12 @@ class _BloodGroupSelectionScreenState
               onPressed: selectedGroup != null && selectedRhesus != null
                   ? () {
                       Navigator.pushNamed(context, '/nav');
-                       ScaffoldMessenger.of(context).showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                           content: Text(
-                               'Groupe sélectionné : $selectedGroup, Rhésus : $selectedRhesus'),
-                         ),
-                       );
+                          content: Text(
+                              'Groupe sélectionné : $selectedGroup, Rhésus : $selectedRhesus'),
+                        ),
+                      );
                     }
                   : null,
               child: Text('Continuer'),
@@ -71,7 +69,8 @@ class _BloodGroupSelectionScreenState
     bool isSelected = selectedGroup == group;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.red, backgroundColor: isSelected ? Colors.red : Colors.red[100],
+        foregroundColor: Colors.red,
+        backgroundColor: isSelected ? Colors.red : Colors.red[100],
         minimumSize: Size(80, 80),
       ),
       onPressed: () {
@@ -93,7 +92,8 @@ class _BloodGroupSelectionScreenState
     bool isSelected = selectedRhesus == rhesus;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.red, backgroundColor: isSelected ? Colors.red : Colors.red[100],
+        foregroundColor: Colors.red,
+        backgroundColor: isSelected ? Colors.red : Colors.red[100],
         minimumSize: Size(50, 50),
       ),
       onPressed: () {

@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 
-class  Resetpage extends StatelessWidget {
+class Resetpage extends StatefulWidget {
   const Resetpage({super.key});
 
   @override
+  _ResetpageState createState() => _ResetpageState();
+}
+
+class _ResetpageState extends State<Resetpage> {
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: Center(
         child: Container(
           width: 350,
@@ -20,21 +33,23 @@ class  Resetpage extends StatelessWidget {
                 blurRadius: 7,
                 offset: Offset(0, 7),
               )
-            ]
+            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Reset password",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
+              Text(
+                "Reset password",
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              ),
-              SizedBox(height: 15,),
-              Text("Texte explicatif de se qui l’utilisateur doit faire  "),
-              SizedBox(height: 15,),
+              SizedBox(height: 15),
+              Text("Texte explicatif de se qui l’utilisateur doit faire"),
+              SizedBox(height: 15),
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'E-mail',
                   border: OutlineInputBorder(
@@ -42,18 +57,19 @@ class  Resetpage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20,),
-              ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, '/reset2');
-              }, child: Text("next"),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                shape: RoundedRectangleBorder(
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/reset2');
+                },
+                child: Text("next"),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(35),
                   ),
+                ),
               ),
-              ),
-             
             ],
           ),
         ),
