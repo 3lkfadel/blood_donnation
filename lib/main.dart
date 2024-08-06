@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           '/ProfilePage': (context) => ProfilePage(),
       },
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: Learningpage1(),
 
     );
       
