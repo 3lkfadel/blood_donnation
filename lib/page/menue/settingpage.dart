@@ -136,13 +136,13 @@ Row(
       onTap: () {
         Navigator.pushNamed(context, '/BloodPointPage');
       },
-      child: _buildFeatureCard('Blood point', Icons.bloodtype, Colors.red[100]),
+      child: _buildFeatureCard('Blood aaa point', Icons.bloodtype, Colors.red[100]),
     ),
     InkWell(
       onTap: () {
         Navigator.pushNamed(context, '/MyPostPage');
       },
-      child: _buildFeatureCard('My post', Icons.post_add, Colors.green[100]),
+      child: _buildFeatureCard('Edit my profile', Icons.post_add, Colors.green[100]),
     ),
   ],
 ),

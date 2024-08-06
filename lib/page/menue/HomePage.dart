@@ -75,9 +75,11 @@ class HomePage extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.phone, color: Colors.red),
+                          TextButton(onPressed: (){}, child: Text('Décliner'),
+                          ),
                           SizedBox(width: 4),
-                          Icon(Icons.message, color: Colors.red),
+                          TextButton(onPressed: (){}, child: Text('accepter'),
+                          ),
                         ],
                       ),
                     ],

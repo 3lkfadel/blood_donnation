@@ -17,7 +17,7 @@ class _NavrootState extends State<Navroot> {
    int _selectIndex = 0;
    final _screens =  [
     HomePage(),
-    FeedPage(),
+    Container(),
     Annoncepage(),
     setingpage(),
 

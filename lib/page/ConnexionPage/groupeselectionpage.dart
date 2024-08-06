@@ -7,7 +7,7 @@ class BloodGroupSelectionScreen extends StatefulWidget {
 
 class _BloodGroupSelectionScreenState extends State<BloodGroupSelectionScreen> {
   String? selectedGroup;
-  String? selectedRhesus;
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -30,29 +30,25 @@ class _BloodGroupSelectionScreenState extends State<BloodGroupSelectionScreen> {
               spacing: 20,
               runSpacing: 20,
               children: [
-                bloodGroupButton('A'),
-                bloodGroupButton('B'),
-                bloodGroupButton('AB'),
-                bloodGroupButton('O'),
-              ],
-            ),
-            SizedBox(height: 20),
-            Wrap(
-              spacing: 20,
-              children: [
-                rhesusButton('+'),
-                rhesusButton('-'),
+                bloodGroupButton('A+'),
+                bloodGroupButton('B+'),
+                bloodGroupButton('AB+'),
+                bloodGroupButton('O+'),
+                bloodGroupButton('A-'),
+                bloodGroupButton('B-'),
+                bloodGroupButton('AB-'),
+                bloodGroupButton('O-'),
               ],
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: selectedGroup != null && selectedRhesus != null
+              onPressed: selectedGroup != null 
                   ? () {
                       Navigator.pushNamed(context, '/nav');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                              'Groupe sélectionné : $selectedGroup, Rhésus : $selectedRhesus'),
+                              'Groupe sélectionné : $selectedGroup, '),
                         ),
                       );
                     }
@@ -88,26 +84,4 @@ class _BloodGroupSelectionScreenState extends State<BloodGroupSelectionScreen> {
     );
   }
 
-  Widget rhesusButton(String rhesus) {
-    bool isSelected = selectedRhesus == rhesus;
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.red,
-        backgroundColor: isSelected ? Colors.red : Colors.red[100],
-        minimumSize: Size(50, 50),
-      ),
-      onPressed: () {
-        setState(() {
-          selectedRhesus = rhesus;
-        });
-      },
-      child: Text(
-        rhesus,
-        style: TextStyle(
-          color: isSelected ? Colors.white : Colors.red,
-          fontSize: 24,
-        ),
-      ),
-    );
-  }
 }

@@ -9,7 +9,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
   final _formKey = GlobalKey<FormState>();
   String? _gender;
   String? _bloodType;
-  int _unitsNeeded = 1;
+  // int _unitsNeeded = 1;
   String? _reason;
 
   @override
@@ -108,30 +108,30 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
               ),
               SizedBox(height: 16),
               Text('Units needed'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: () {
-                      setState(() {
-                        if (_unitsNeeded > 1) {
-                          _unitsNeeded--;
-                        }
-                      });
-                    },
-                  ),
-                  Text('$_unitsNeeded'),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      setState(() {
-                        _unitsNeeded++;
-                      });
-                    },
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: <Widget>[
+              //     IconButton(
+              //       icon: Icon(Icons.remove),
+              //       onPressed: () {
+              //         setState(() {
+              //           if (_unitsNeeded > 1) {
+              //             _unitsNeeded--;
+              //           }
+              //         });
+              //       },
+              //     ),
+              //     Text('$_unitsNeeded'),
+              //     IconButton(
+              //       icon: Icon(Icons.add),
+              //       onPressed: () {
+              //         setState(() {
+              //           _unitsNeeded++;
+              //         });
+              //       },
+              //     ),
+              //   ],
+              // ),
               SizedBox(height: 16),
               Text('Reason'),
               Wrap(
@@ -148,7 +148,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Process data
+                 
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Processing Data')));
                   }

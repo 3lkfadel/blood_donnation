@@ -17,7 +17,7 @@ class NotificationPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.notifications),
             onPressed: () {
-              // Gérer l'icône de notification
+              
             },
           ),
         ],

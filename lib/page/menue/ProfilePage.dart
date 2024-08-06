@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: AssetImage('assets/profile_picture.png'), // Replace with actual image path
+                  backgroundImage: AssetImage('assets/profile_picture.png'), 
                 ),
                 SizedBox(height: 16),
                 Text(
