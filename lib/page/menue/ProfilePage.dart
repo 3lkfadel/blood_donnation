@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:blood_donnation/api.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -21,6 +21,45 @@ class _ProfilePageState extends State<ProfilePage> {
   XFile? _image;
 
   final ImagePicker _picker = ImagePicker();
+  final ApiService _apiService = ApiService(); // Instanciez votre ApiService
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _ageController.dispose();
+    _emailController.dispose();
+    _cityController.dispose();
+    super.dispose();
+  }
+
+
+  Future<void> _loadProfile() async {
+    try {
+      final profileData = await _apiService.getProfiles();
+
+      setState(() {
+        _nameController.text = profileData['name'] ?? '';
+        _phoneController.text = profileData['telephone'] ?? '';
+        _ageController.text = profileData['age']?.toString() ?? '';
+        _emailController.text = profileData['email'] ?? '';
+        _cityController.text = profileData['ville'] ?? '';
+        selectedGender = profileData['sexe'];
+        selectedCountry = profileData['pays'];
+
+        if (profileData['image'] != null) {
+          _image = XFile(profileData['image']);
+        }
+      });
+    } catch (e) {
+      print('Error loading profile: $e');
+    }
+  }
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -30,6 +69,38 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  Future<void> _updateProfile() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final response = await _apiService.updateProfile(
+          name: _nameController.text,
+          email: _emailController.text,
+          phone: _phoneController.text,
+          imagePath: _image?.path,
+          gender: selectedGender,
+          ville: _cityController.text,
+          age: _ageController.text,
+          pays: selectedCountry,
+        );
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Profile updated successfully')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to update profile: ${response.data['message']}')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +108,9 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text('Profile'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ),
       body: Padding(
@@ -52,8 +125,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: _image == null
-                        ? AssetImage('assets/profile_picture.png')
-                        : FileImage(File(_image!.path)),
+                        ? AssetImage('assets/images/Utilisateur1.jpg') as ImageProvider
+                        : NetworkImage(_image!.path),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -89,10 +162,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 TextFormField(
                   controller: _ageController,
-                  decoration: InputDecoration(labelText: 'age'),
+                  decoration: InputDecoration(labelText: 'Age'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your location';
+                      return 'Please enter your age';
                     }
                     return null;
                   },
@@ -122,9 +195,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: InputDecoration(labelText: 'Sexe'),
                   items: ['Homme', 'Femme', 'Autre']
                       .map((gender) => DropdownMenuItem(
-                            value: gender,
-                            child: Text(gender),
-                          ))
+                    value: gender,
+                    child: Text(gender),
+                  ))
                       .toList(),
                   onChanged: (value) {
                     setState(() {
@@ -168,11 +241,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Save form data
-                    }
-                  },
+                  onPressed: _updateProfile,
                   child: Text('Save'),
                 ),
               ],

@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:blood_donnation/config/config.dart';
 
 class ApiService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _storage = FlutterSecureStorage();
-  final String baseUrl = 'http://192.168.11.120:8000/api';
 
   ApiService() {
-    _dio.options.baseUrl = baseUrl;
+    _dio.options.baseUrl = ApiEndpoints.baseUrl; // Utiliser la constante de baseUrl
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         String? token = await _storage.read(key: 'auth_token');
@@ -22,14 +22,13 @@ class ApiService {
     ));
   }
 
-  // Method to store token securely
   Future<void> storeToken(String token) async {
     await _storage.write(key: 'auth_token', value: token);
   }
 
   Future<Response> register(String name, String email, String numero, String password, String passwordConfirmation) async {
     final response = await _dio.post(
-      '/register',
+      ApiEndpoints.register, // Utiliser l'URL de l'API
       data: {
         'name': name,
         'email': email,
@@ -45,15 +44,13 @@ class ApiService {
       throw Exception('Failed to register: ${response.data['message']}');
     }
 
-    return response; // Retourne la réponse ici
+    return response;
   }
-
-
 
   Future<void> login(String email, String password) async {
     try {
       final response = await _dio.post(
-        '/login',
+        ApiEndpoints.login,
         data: {
           'email': email,
           'password': password,
@@ -62,8 +59,6 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final responseData = response.data;
-
-        // verifier que le token est présent dans la réponse
         if (responseData.containsKey('token')) {
           await _storage.write(key: 'auth_token', value: responseData['token']);
           print('Login successful');
@@ -71,7 +66,6 @@ class ApiService {
           throw Exception('Token non trouvé dans la réponse');
         }
       } else {
-        // Gérer les réponses inattendues
         final responseData = response.data;
         if (responseData != null && responseData is Map<String, dynamic>) {
           final errorMessage = responseData['message'] ?? 'Échec de la connexion';
@@ -94,15 +88,11 @@ class ApiService {
     }
   }
 
-
-
-  // Obtenir les détails du profil utilisateur
   Future<Response> getProfile() async {
-    final response = await _dio.get('/profile');
+    final response = await _dio.get(ApiEndpoints.profile);
     return response;
   }
 
-  // Mettre à jour le profil utilisateur
   Future<Response> updateProfile({
     required String name,
     required String email,
@@ -124,15 +114,14 @@ class ApiService {
       if (pays != null) 'pays': pays,
     });
 
-    final response = await _dio.put('/profile', data: formData);
+    final response = await _dio.put(ApiEndpoints.updateProfile, data: formData);
     return response;
   }
 
-  // Method to update the user's blood group
   Future<Response> updateBloodGroup(String bloodGroup) async {
     try {
       final response = await _dio.post(
-        '/groupsanguin',
+        ApiEndpoints.updateBloodGroup,
         data: {'blood_group': bloodGroup},
       );
 
@@ -149,7 +138,31 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getProfiles() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.profile);
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception('Failed to load profile');
+      }
+    } catch (e) {
+      print('Error fetching profile: $e');
+      rethrow;
+    }
+  }
+
+  Future<Response> postAnnouncement(String title, String content, String raison, String typeSang, String centreSante) async {
+    final FormData formData = FormData.fromMap({
+      'titre': title,
+      'description': content,
+      'raison': raison,
+      'TypeSang': typeSang,
+      'CentreSante': centreSante,
+    });
+
+    final response = await _dio.post(
+        ApiEndpoints.annonces, data: formData);
+    return response;
+  }
 }
-
-
-
