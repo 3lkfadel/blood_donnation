@@ -49,9 +49,18 @@ class _SiginuppageState extends State<Siginuppage> {
         _confirmPasswordController.text,
       );
 
-      // Utilisez le code de statut de la réponse pour gérer la logique
       if (response.statusCode == 201) {
-        Navigator.pushReplacementNamed(context, '/selectionsang');
+        final responseData = response.data;
+        // Assurez-vous de stocker le token dans le stockage sécurisé
+        if (responseData != null && responseData['token'] != null) {
+          await apiService.storeToken(responseData['token']);
+          print('Registration successful');
+          Navigator.pushReplacementNamed(context, '/selectionsang');
+        } else {
+          setState(() {
+            _errorMessage = 'Token non trouvé dans la réponse d\'inscription.';
+          });
+        }
       } else {
         setState(() {
           _errorMessage = 'Échec de l\'inscription. Code: ${response.statusCode}';
@@ -60,7 +69,6 @@ class _SiginuppageState extends State<Siginuppage> {
     } catch (e) {
       String errorMessage;
       if (e is DioError) {
-        // Imprimer les informations de débogage
         print('DioError: ${e.response?.data}');
         if (e.response != null && e.response?.data != null) {
           errorMessage = e.response?.data['message'] ?? 'Échec de l\'inscription.';

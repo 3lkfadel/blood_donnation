@@ -22,6 +22,11 @@ class ApiService {
     ));
   }
 
+  // Method to store token securely
+  Future<void> storeToken(String token) async {
+    await _storage.write(key: 'auth_token', value: token);
+  }
+
   Future<Response> register(String name, String email, String numero, String password, String passwordConfirmation) async {
     final response = await _dio.post(
       '/register',
