@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
          '/leraningpage' : (context) => Learningpage1(),
          '/leraningpage2' : (context) => Learningpage2(),
          '/leraningpage3' : (context) => Learningpage3(),
-        '/login' : (context) => Loginpage(),
+        '/login' : (context) => LoginPage(),
          '/siginup' : (context) => Siginuppage(),
           '/reset' : (context) => Resetpage(),
           '/reset2' : (context) => VerificationPage(),
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           '/ProfilePage': (context) => ProfilePage(),
       },
       debugShowCheckedModeBanner: false,
-      home: Loginpage(),
+      home: LoginPage(),
 
     );
       

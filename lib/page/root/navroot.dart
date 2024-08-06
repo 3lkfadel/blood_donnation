@@ -19,7 +19,7 @@ class _NavrootState extends State<Navroot> {
     HomePage(),
     FeedPage(),
     Annoncepage(),
-    setingpage(),
+    SettingPage(),
 
 
   ];
