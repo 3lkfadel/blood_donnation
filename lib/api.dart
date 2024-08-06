@@ -109,19 +109,45 @@ class ApiService {
     required String phone,
     String? imagePath,
     String? gender,
+    String? ville,
+    String? age,
+    String? pays,
   }) async {
     final FormData formData = FormData.fromMap({
       'name': name,
       'email': email,
-      'phone': phone,
+      'telephone': phone,
       if (imagePath != null) 'image': await MultipartFile.fromFile(imagePath),
-      if (gender != null) 'gender': gender,
+      if (gender != null) 'sexe': gender,
+      if (ville != null) 'ville': ville,
+      if (age != null) 'age': age,
+      if (pays != null) 'pays': pays,
     });
 
     final response = await _dio.put('/profile', data: formData);
     return response;
   }
 
+  // Method to update the user's blood group
+  Future<Response> updateBloodGroup(String bloodGroup) async {
+    try {
+      final response = await _dio.post(
+        '/groupsanguin',
+        data: {'blood_group': bloodGroup},
+      );
+
+      if (response.statusCode == 200) {
+        print('Groupe sanguin mis à jour');
+      } else {
+        throw Exception('Échec de la mise à jour du groupe sanguin: ${response.data['message']}');
+      }
+
+      return response;
+    } catch (e) {
+      print('Erreur lors de la mise à jour du groupe sanguin: $e');
+      rethrow;
+    }
+  }
 
 }
 

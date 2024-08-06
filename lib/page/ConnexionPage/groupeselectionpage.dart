@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:blood_donnation/api.dart'; // Assurez-vous que le chemin d'importation est correct
 
 class BloodGroupSelectionScreen extends StatefulWidget {
   @override
@@ -7,7 +8,7 @@ class BloodGroupSelectionScreen extends StatefulWidget {
 
 class _BloodGroupSelectionScreenState extends State<BloodGroupSelectionScreen> {
   String? selectedGroup;
- 
+  final ApiService _apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
@@ -42,16 +43,10 @@ class _BloodGroupSelectionScreenState extends State<BloodGroupSelectionScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: selectedGroup != null 
-                  ? () {
-                      Navigator.pushNamed(context, '/nav');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              'Groupe sélectionné : $selectedGroup, '),
-                        ),
-                      );
-                    }
+              onPressed: selectedGroup != null
+                  ? () async {
+                await _updateBloodGroup(selectedGroup!);
+              }
                   : null,
               child: Text('Continuer'),
             ),
@@ -84,4 +79,29 @@ class _BloodGroupSelectionScreenState extends State<BloodGroupSelectionScreen> {
     );
   }
 
+  Future<void> _updateBloodGroup(String bloodGroup) async {
+    try {
+      final response = await _apiService.updateBloodGroup(bloodGroup);
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Compte créée avec succès ! Bienvenue'),
+          ),
+        );
+        Navigator.pushNamed(context, '/nav');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Échec de l\'enregistrement du groupe sanguin'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur lors de l\'enregistrement: $e'),
+        ),
+      );
+    }
+  }
 }
