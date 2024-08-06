@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -10,11 +13,22 @@ class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _locationController = TextEditingController();
+  final _ageController = TextEditingController();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
- String? selectedGender;
+  final _cityController = TextEditingController();
+  String? selectedGender;
+  String? selectedCountry;
+  XFile? _image;
 
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = pickedFile;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text('Profile'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            
-          },
+          onPressed: () {},
         ),
       ),
       body: Padding(
@@ -35,9 +47,14 @@ class _ProfilePageState extends State<ProfilePage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage('assets/profile_picture.png'), // Replace with actual image path
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _image == null
+                        ? AssetImage('assets/profile_picture.png')
+                        : FileImage(File(_image!.path)),
+                  ),
                 ),
                 SizedBox(height: 16),
                 Text(
@@ -71,8 +88,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                 ),
                 TextFormField(
-                  controller: _locationController,
-                  decoration: InputDecoration(labelText: 'Localisation'),
+                  controller: _ageController,
+                  decoration: InputDecoration(labelText: 'age'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your location';
@@ -90,11 +107,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     return null;
                   },
                 ),
-                
+                TextFormField(
+                  controller: _cityController,
+                  decoration: InputDecoration(labelText: 'Ville'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your city';
+                    }
+                    return null;
+                  },
+                ),
                 DropdownButtonFormField<String>(
                   value: selectedGender,
                   decoration: InputDecoration(labelText: 'Sexe'),
-                  items: ['Male', 'Female', 'Other']
+                  items: ['Homme', 'Femme', 'Autre']
                       .map((gender) => DropdownMenuItem(
                             value: gender,
                             child: Text(gender),
@@ -112,16 +138,30 @@ class _ProfilePageState extends State<ProfilePage> {
                     return null;
                   },
                 ),
+                SizedBox(height: 16),
                 TextFormField(
-                  controller: _passwordController,
+                  readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    suffixIcon: Icon(Icons.edit),
+                    labelText: 'Pays',
+                    suffixIcon: Icon(Icons.arrow_drop_down),
                   ),
-                  obscureText: true,
+                  onTap: () {
+                    showCountryPicker(
+                      context: context,
+                      showPhoneCode: false,
+                      onSelect: (Country country) {
+                        setState(() {
+                          selectedCountry = country.name;
+                        });
+                      },
+                    );
+                  },
+                  controller: TextEditingController(
+                    text: selectedCountry,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return 'Please select your country';
                     }
                     return null;
                   },
@@ -130,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      
+                      // Save form data
                     }
                   },
                   child: Text('Save'),
