@@ -18,16 +18,20 @@ class _ProfilePageState extends State<ProfilePage> {
   final _cityController = TextEditingController();
   String? selectedGender;
   String? selectedCountry;
-  XFile? _image;
+  XFile? _localImage; // Pour les images locales
+  String? _networkImageUrl; // Pour les images du réseau
 
   final ImagePicker _picker = ImagePicker();
-  final ApiService _apiService = ApiService(); // Instanciez votre ApiService
+  final ApiService _apiService = ApiService();
+
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _loadProfile();
   }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -38,10 +42,10 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-
   Future<void> _loadProfile() async {
     try {
       final profileData = await _apiService.getProfiles();
+      print('Profile data: $profileData');
 
       setState(() {
         _nameController.text = profileData['name'] ?? '';
@@ -53,7 +57,8 @@ class _ProfilePageState extends State<ProfilePage> {
         selectedCountry = profileData['pays'];
 
         if (profileData['image'] != null) {
-          _image = XFile(profileData['image']);
+          _networkImageUrl = profileData['image'];
+          print('Network Image URL: $_networkImageUrl');
         }
       });
     } catch (e) {
@@ -65,18 +70,23 @@ class _ProfilePageState extends State<ProfilePage> {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = pickedFile;
+      _localImage = pickedFile;
+      _networkImageUrl = null; // Réinitialiser lorsque l'utilisateur choisit une nouvelle image
+      print('Local Image Path: ${_localImage?.path}');
     });
   }
 
   Future<void> _updateProfile() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
       try {
         final response = await _apiService.updateProfile(
           name: _nameController.text,
           email: _emailController.text,
           phone: _phoneController.text,
-          imagePath: _image?.path,
+          imagePath: _localImage?.path, // Envoi du chemin de l'image locale
           gender: selectedGender,
           ville: _cityController.text,
           age: _ageController.text,
@@ -85,9 +95,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Profile updated successfully')),
+            SnackBar(content: Text('Profil mis à jour avec succès')),
           );
-        } else {
+        }
+        else if (response.statusCode == 302) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Rédirection detecté')),
+          );
+        }else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to update profile: ${response.data['message']}')),
           );
@@ -96,10 +111,13 @@ class _ProfilePageState extends State<ProfilePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +131,9 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
       ),
-      body: Padding(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
@@ -124,21 +144,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: _pickImage,
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: _image == null
-                        ? AssetImage('assets/images/Utilisateur1.jpg') as ImageProvider
-                        : NetworkImage(_image!.path),
+                    backgroundImage: _localImage != null
+                        ? FileImage(File(_localImage!.path))
+                        : (_networkImageUrl != null
+                        ? NetworkImage(_networkImageUrl!)
+                        : AssetImage('assets/images/Utilisateur1.jpg') as ImageProvider),
                   ),
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'GRACE KOLOMA',
+                  _nameController.text.toUpperCase(),
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 8),
-                Text('Koloma'),
+                Text(_emailController.text),
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _nameController,
@@ -175,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: InputDecoration(labelText: 'Email'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'email necessaire';
                     }
                     return null;
                   },
@@ -185,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: InputDecoration(labelText: 'Ville'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your city';
+                      return 'Entrer votre ville';
                     }
                     return null;
                   },
@@ -206,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please select your gender';
+                      return 'selectionner le sexe';
                     }
                     return null;
                   },
@@ -234,7 +256,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please select your country';
+                      return 'selectionner un pays';
                     }
                     return null;
                   },

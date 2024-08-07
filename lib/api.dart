@@ -84,7 +84,7 @@ class ApiService {
       }
     } catch (e) {
       print('Erreur inattendue: $e');
-      throw Exception('Erreur inattendue');
+      throw Exception('Erreur de connexion!! verivifiez vos identifiants');
     }
   }
 
@@ -114,7 +114,7 @@ class ApiService {
       if (pays != null) 'pays': pays,
     });
 
-    final response = await _dio.put(ApiEndpoints.updateProfile, data: formData);
+    final response = await _dio.post(ApiEndpoints.updateProfile, data: formData);
     return response;
   }
 
