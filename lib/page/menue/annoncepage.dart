@@ -118,12 +118,13 @@ class _AnnoncepageState extends State<Annoncepage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('B+', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 5,),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.phone, color: Colors.red),
-                        SizedBox(width: 4),
-                        Icon(Icons.message, color: Colors.red),
+                        TextButton(onPressed: (){}, child: Text("repondre")),
+                        
+                        
                       ],
                     ),
                   ],

@@ -10,6 +10,7 @@ class Learningpage1 extends StatelessWidget {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
+         color: Colors.white,
         padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -21,7 +22,7 @@ class Learningpage1 extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.asset(
-                  "name",
+                  "assets/learningpage/image3.png",
                   height: 200,
                 ),
               ),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class Learningpage3 extends StatelessWidget {
   const Learningpage3({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -11,6 +10,7 @@ class Learningpage3 extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(20),
+        color: Colors.white, // Ajoutez cette ligne pour définir la couleur de fond
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -21,7 +21,7 @@ class Learningpage3 extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.asset(
-                  "name",
+                  "assets/learningpage/image3.png",
                   height: 200,
                 ),
               ),

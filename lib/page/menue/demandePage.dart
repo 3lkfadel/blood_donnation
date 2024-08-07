@@ -9,14 +9,14 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
   final _formKey = GlobalKey<FormState>();
   String? _gender;
   String? _bloodType;
-  int _unitsNeeded = 1;
+  //int _unitsNeeded = 1;
   String? _reason;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
+        title: Text('Blood Donation Form'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -57,6 +57,15 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your location';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Additional Location Details'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter additional location details';
                   }
                   return null;
                 },
@@ -107,32 +116,6 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 ],
               ),
               SizedBox(height: 16),
-              Text('Units needed'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: () {
-                      setState(() {
-                        if (_unitsNeeded > 1) {
-                          _unitsNeeded--;
-                        }
-                      });
-                    },
-                  ),
-                  Text('$_unitsNeeded'),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      setState(() {
-                        _unitsNeeded++;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
               Text('Reason'),
               Wrap(
                 spacing: 8.0,
@@ -144,13 +127,49 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                   _buildReasonChip('I prefer not say'),
                 ],
               ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Details of the Request'),
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter details of your request';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+                        //Text('Units needed'),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: <Widget>[
+              //     IconButton(
+              //       icon: Icon(Icons.remove),
+              //       onPressed: () {
+              //         setState(() {
+              //           if (_unitsNeeded > 1) {
+              //             _unitsNeeded--;
+              //           }
+              //         });
+              //       },
+              //     ),
+              //     Text('$_unitsNeeded'),
+              //     IconButton(
+              //       icon: Icon(Icons.add),
+              //       onPressed: () {
+              //         setState(() {
+              //           _unitsNeeded++;
+              //         });
+              //       },
+              //     ),
+              //   ],
+              // ),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Process data
+                    
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Processing Data')));
+                        SnackBar(content: Text("plus d'information")));
                   }
                 },
                 child: Text('Submit'),
@@ -186,3 +205,4 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
     );
   }
 }
+
