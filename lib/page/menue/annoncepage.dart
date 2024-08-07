@@ -31,7 +31,6 @@ class _AnnoncepageState extends State<Annoncepage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,45 +71,69 @@ class _AnnoncepageState extends State<Annoncepage> {
           ),
         ],
       ),
-      body: _announcements.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: _announcements.length,
-        itemBuilder: (context, index) {
-          final annonce = _announcements[index];
-          return Card(
-            color: Colors.red[50],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  annonce['userImage'] ?? 'https://via.placeholder.com/150', // URL de l'image de l'utilisateur
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/demande');
+                  },
+                  icon: Icon(Icons.bloodtype),
+                  label: Text('Besoin de sang'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 ),
-              ),
-              title: Text(annonce['titre'] ?? 'Sans titre'),
-              subtitle: Text(annonce['description'] ?? 'Aucune description'),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: Icon(Icons.favorite),
+                  label: Text('Centre de don'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10,),
+          _announcements.isEmpty
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
+            shrinkWrap: true, // Permet de redimensionner la hauteur du ListView
+            physics: NeverScrollableScrollPhysics(), // Empêche le défilement du ListView interne
+            itemCount: _announcements.length,
+            itemBuilder: (context, index) {
+              final annonce = _announcements[index];
+              return Card(
+                color: Colors.red[50],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: Text(
                     annonce['TypeSang'] ?? 'N/A',
                     style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 5,),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+                  title: Text(annonce['titre'] ?? 'Sans titre'),
+                  subtitle: Text(annonce['description'] ?? 'Aucune description'),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(onPressed: (){}, child: Text("Répondre")),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextButton(onPressed: (){}, child: Text("Répondre")),
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
+
 }
