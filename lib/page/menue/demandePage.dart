@@ -105,7 +105,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                   },
                 ),
               SizedBox(height: 16),
-              Text('Blood Type'),
+              Text('Type de sang'),
               Wrap(
                 spacing: 8.0,
                 children: <Widget>[
@@ -120,15 +120,15 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 ],
               ),
               SizedBox(height: 16),
-              Text('Reason'),
+              Text('Raison'),
               Wrap(
                 spacing: 8.0,
                 children: <Widget>[
                   _buildReasonChip('Accident'),
-                  _buildReasonChip('Surgery'),
-                  _buildReasonChip('Other'),
-                  _buildReasonChip('Pregnancy'),
-                  _buildReasonChip('I prefer not say'),
+                  _buildReasonChip('Chirurgie'),
+                  _buildReasonChip('Autre'),
+                  _buildReasonChip('Grossesse'),
+                  _buildReasonChip('Je préfère ne pas le dire'),
                 ],
               ),
               TextFormField(
