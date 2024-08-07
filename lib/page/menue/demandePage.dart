@@ -7,8 +7,9 @@ class BloodDonationFormPage extends StatefulWidget {
 
 class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
   final _formKey = GlobalKey<FormState>();
-  String? _gender;
+  String? selectedGender;
   String? _bloodType;
+
   //int _unitsNeeded = 1;
   String? _reason;
 
@@ -25,7 +26,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
           child: ListView(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: 'Nom'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your name';
@@ -34,7 +35,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Phone'),
+                decoration: InputDecoration(labelText: 'Numero'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your phone';
@@ -53,7 +54,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Location'),
+                decoration: InputDecoration(labelText: 'email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your location';
@@ -62,7 +63,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Additional Location Details'),
+                decoration: InputDecoration(labelText: ' Localisation '),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter additional location details';
@@ -71,35 +72,38 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 },
               ),
               SizedBox(height: 16),
-              Text('Gender'),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: Text('Male'),
-                      value: 'Male',
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: Text('Female'),
-                      value: 'Female',
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
+              TextFormField(
+                decoration: InputDecoration(labelText: ' centre de santé '),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter additional location details';
+                  }
+                  return null;
+                },
               ),
+              SizedBox(height: 16),
+              
+              DropdownButtonFormField<String>(
+                  value: selectedGender,
+                  decoration: InputDecoration(labelText: 'Sexe'),
+                  items: ['Homme', 'Femme', 'Autre']
+                      .map((gender) => DropdownMenuItem(
+                    value: gender,
+                    child: Text(gender),
+                  ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedGender = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'selectionner le sexe';
+                    }
+                    return null;
+                  },
+                ),
               SizedBox(height: 16),
               Text('Blood Type'),
               Wrap(
@@ -128,7 +132,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 ],
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Details of the Request'),
+                decoration: InputDecoration(labelText: "plus d'information"),
                 maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -169,7 +173,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                   if (_formKey.currentState!.validate()) {
                     
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("plus d'information")));
+                        SnackBar(content: Text("")));
                   }
                 },
                 child: Text('Submit'),
