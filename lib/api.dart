@@ -165,4 +165,22 @@ class ApiService {
         ApiEndpoints.annonces, data: formData);
     return response;
   }
+
+  //afficher les annonces
+  Future<List<Map<String, dynamic>>> getAnnouncements() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.annonces);
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        // Convertir la liste dynamique en liste de cartes
+        return data.map((item) => item as Map<String, dynamic>).toList();
+      } else {
+        throw Exception('Failed to load announcements');
+      }
+    } catch (e) {
+      print('Error fetching announcements: $e');
+      rethrow;
+    }
+  }
+
 }
