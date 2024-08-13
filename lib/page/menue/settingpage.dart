@@ -70,6 +70,7 @@ class SettingPage extends StatelessWidget {
             final email = data['email'] as String?;
             final phone = data['telephone'] as String?;
             final gender = data['sexe'] as String?;
+            final groupesanguin = data['blood_group'] as String?;
 
             return SingleChildScrollView(
               child: Padding(
@@ -121,9 +122,8 @@ class SettingPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Group blood'),
-                                Text('donation'),
-                                Text('Gender'),
+                                Text('Groupe sanguin'),
+                                Text( groupesanguin ?? '' ),
                               ],
                             ),
                             SizedBox(height: 8),
@@ -131,7 +131,6 @@ class SettingPage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Blood point'),
-                                Text('Gender'),
                                 Text('Gender'),
                               ],
                             ),
@@ -147,13 +146,13 @@ class SettingPage extends StatelessWidget {
                           onTap: () {
                             Navigator.pushNamed(context, '/historique');
                           },
-                          child: _buildFeatureCard(' history', Icons.history, Colors.lightBlue[100]),
+                          child: _buildFeatureCard(' Histororique', Icons.history, Colors.lightBlue[100]),
                         ),
                         InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/ProfilePage');
                           },
-                          child: _buildFeatureCard('Edit my profile', Icons.edit, Colors.lightBlue[200]),
+                          child: _buildFeatureCard('Editer profil', Icons.edit, Colors.lightBlue[200]),
                         ),
                       ],
                     ),
