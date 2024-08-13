@@ -88,13 +88,17 @@ class _AnnoncepageState extends State<Annoncepage> {
                   },
                   icon: Icon(Icons.bloodtype),
                   label: Text('Besoin de sang'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red,
+                      padding: EdgeInsets.all(19)
+                  ),
                 ),
                 ElevatedButton.icon(
                   onPressed: () {},
                   icon: Icon(Icons.favorite),
                   label: Text('Centre de don'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey,
+                  padding: EdgeInsets.all(19)
+                  ),
                 ),
               ],
             ),
