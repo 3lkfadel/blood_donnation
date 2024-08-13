@@ -75,8 +75,13 @@ class NotificationTile extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
+ Widget build(BuildContext context) {
+  return InkWell(
+    onTap: () {
+     
+      Navigator.pushNamed(context, '/details');
+    },
+    child: Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -96,7 +101,9 @@ class NotificationTile extends StatelessWidget {
           size: 16,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
