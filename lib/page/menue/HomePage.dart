@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:blood_donnation/api.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,11 +11,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final ApiService _apiService = ApiService();
+  List<Map<String, dynamic>> _announcements = [];
   final List<String> imgList = [
     "assets/learningpage/image3.png",
     "assets/learningpage/image2.png",
     "assets/learningpage/image3.png",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAnnouncements();
+  }
+
+  Future<void> _fetchAnnouncements() async {
+    try {
+      final announcements = await _apiService.getAnnouncements();
+      print('Fetched announcements: $announcements'); // Ajoutez ceci pour déboguer
+      setState(() {
+        _announcements = announcements;
+      });
+    } catch (e) {
+      print('Failed to load announcements: $e');
+      // Vous pouvez afficher un message d'erreur ici
+    }
+  }
 
   bool _hasNewNotifications = true;
 
@@ -107,27 +130,44 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(height: 15),
-              Card(
-                color: Colors.red[50],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              _announcements.isEmpty
+              ? Center(child: CircularProgressIndicator())
+               : ListView.builder(
+                shrinkWrap: true, // Permet de redimensionner la hauteur du ListView
+                 physics: NeverScrollableScrollPhysics(), // Empêche le défilement du ListView interne
+                 itemCount: _announcements.length,
+                  itemBuilder: (context, index) {
+                    final annonce = _announcements[index];
+                    return Card(
+                      color: Colors.red[50],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        leading: Text(
+                          annonce['TypeSang'] ?? 'N/A',
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                        title: Text(annonce['titre'] ?? 'Sans titre'),
+                        subtitle: Text(
+                            annonce['description'] ?? 'Aucune description'),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextButton(onPressed: () {}, child: Text(
+                                    "Répondre")),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                child: ListTile(
-                  leading: Text(
-                    'B+',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  title: Text('Koloma Fadel'),
-                  subtitle: Text('Rue 24 Bobo'),
-                  trailing: TextButton(
-                    onPressed: (){},
-                    child: Text("Répondre"),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
