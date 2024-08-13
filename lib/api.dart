@@ -233,4 +233,21 @@ class ApiService {
   }
 
 
+  Future<List<Map<String, dynamic>>> getAnnoncesHistory() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.history);
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        // Convert dynamic list to a list of maps
+        return data.map((item) => item as Map<String, dynamic>).toList();
+      } else {
+        throw Exception('Failed to load user announcements');
+      }
+    } catch (e) {
+      print('Error fetching user announcements: $e');
+      rethrow;
+    }
+  }
+
+
 }

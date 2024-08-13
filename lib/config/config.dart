@@ -9,4 +9,5 @@ class ApiEndpoints {
   static const String annonces ='$baseUrl/annonces';
   static const String fcm ='$baseUrl/fcm';
   static const String notification = '$baseUrl/notifications';
+  static const String history = '$baseUrl/historiques';
 }
