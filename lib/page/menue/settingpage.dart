@@ -54,6 +54,7 @@ class SettingPage extends StatelessWidget {
             },
           ),
         ],
+        automaticallyImplyLeading: false, 
       ),
       body: FutureBuilder(
         future: _apiService.getProfile(),

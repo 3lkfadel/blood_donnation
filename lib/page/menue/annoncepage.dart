@@ -61,6 +61,7 @@ class _AnnoncepageState extends State<Annoncepage> {
               ),
             ),
           ],
+          
         ),
         actions: [
           IconButton(
@@ -70,13 +71,16 @@ class _AnnoncepageState extends State<Annoncepage> {
             icon: Icon(Icons.notifications, color: Colors.black),
           ),
         ],
+        automaticallyImplyLeading: false, 
       ),
       body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Wrap(
+              alignment: WrapAlignment.spaceEvenly,
+
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton.icon(
                   onPressed: () {
