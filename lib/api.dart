@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:blood_donnation/config/config.dart';
+import 'package:blood_donnation/config/Notification.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -182,5 +183,54 @@ class ApiService {
       rethrow;
     }
   }
+
+  Future<List<AppNotification>> getNotifications() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.notification);
+      if (response.statusCode == 200) {
+        // Assurez-vous que la réponse est une liste non vide
+        List<dynamic> data = response.data as List<dynamic>;
+        // Transformer la réponse en une liste d'objets AppNotification
+        List<AppNotification> notifications = data.map((notification) {
+          if (notification is Map<String, dynamic>) {
+            return AppNotification.fromJson(notification);
+          } else {
+            throw Exception('Notification mal formatée');
+          }
+        }).toList();
+        return notifications;
+      } else {
+        return []; // Retourner une liste vide en cas d'échec
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des notifications: $e');
+      return []; // Retourner une liste vide en cas d'erreur
+    }
+  }
+
+
+  Future<void> sendFcmTokenToBackend(String token) async {
+    try {
+      final response = await Dio().post(ApiEndpoints.fcm, data: {
+        'fcm_token': token,
+      });
+
+      if (response.statusCode == 200) {
+        print('Token FCM envoyé avec succès.');
+      } else if (response.statusCode == 302) {
+        // Gérer la redirection
+        print('Redirection détectée: ${response.headers}');
+      } else {
+        print('Erreur lors de l\'envoi du token FCM : ${response.statusCode}');
+      }
+    } catch (e) {
+      if (e is DioException) {
+        print('Exception Dio lors de l\'envoi du token FCM : ${e.message}');
+      } else {
+        print('Exception lors de l\'envoi du token FCM : $e');
+      }
+    }
+  }
+
 
 }

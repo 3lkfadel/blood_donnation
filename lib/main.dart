@@ -1,3 +1,4 @@
+import 'package:blood_donnation/firebase_options.dart';
 import 'package:blood_donnation/page/ConnexionPage/LoginPage.dart';
 import 'package:blood_donnation/page/ConnexionPage/SiginUppage.dart';
 import 'package:blood_donnation/page/ConnexionPage/groupeselectionpage.dart';
@@ -14,9 +15,16 @@ import 'package:blood_donnation/page/restePassword/resetPage2.dart';
 import 'package:blood_donnation/page/restePassword/resetPassword3.dart';
 import 'package:blood_donnation/page/root/navroot.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:blood_donnation/config/firebase_api.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseApi().initNotifications();
   runApp(const MyApp());
 }
 
@@ -28,25 +36,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-         '/leraningpage' : (context) => Learningpage1(),
-         '/leraningpage2' : (context) => Learningpage2(),
-         '/leraningpage3' : (context) => Learningpage3(),
-        '/login' : (context) => LoginPage(),
-         '/siginup' : (context) => Siginuppage(),
-          '/reset' : (context) => Resetpage(),
-          '/reset2' : (context) => VerificationPage(),
-          '/reset3' : (context) => Resetpassword3(),
-          '/selectionsang' : (context)=> BloodGroupSelectionScreen(),
-          '/homepage': (context) => HomePage(),
-          '/demande': (context) => BloodDonationFormPage(),
-          '/NotificationPage': (context) => NotificationPage(),
-          '/nav':(context) => Navroot(),
-          '/ProfilePage': (context) => ProfilePage(),
+        '/leraningpage': (context) => Learningpage1(),
+        '/leraningpage2': (context) => Learningpage2(),
+        '/leraningpage3': (context) => Learningpage3(),
+        '/login': (context) => LoginPage(),
+        '/siginup': (context) => Siginuppage(),
+        '/reset': (context) => Resetpage(),
+        '/reset2': (context) => VerificationPage(),
+        '/reset3': (context) => Resetpassword3(),
+        '/selectionsang': (context) => BloodGroupSelectionScreen(),
+        '/homepage': (context) => HomePage(),
+        '/demande': (context) => BloodDonationFormPage(),
+        '/NotificationPage': (context) => NotificationPage(),
+        '/nav': (context) => Navroot(),
+        '/ProfilePage': (context) => ProfilePage(),
       },
       debugShowCheckedModeBanner: false,
       home: Learningpage1(),
-
     );
-      
   }
 }

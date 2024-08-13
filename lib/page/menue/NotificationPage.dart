@@ -1,6 +1,24 @@
+import 'package:blood_donnation/config/Notification.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:blood_donnation/api.dart';
 
-class NotificationPage extends StatelessWidget {
+class NotificationPage extends StatefulWidget {
+  const NotificationPage({Key? key}) : super(key: key);
+
+  @override
+  _NotificationPageState createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
+  late Future<List<AppNotification>> _notificationsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationsFuture = ApiService().getNotifications();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,53 +31,33 @@ class NotificationPage extends StatelessWidget {
             ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Gérer l'icône de notification
-            },
-          ),
-        ],
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            NotificationTile(
-              title: 'Titre de la notification 1',
-              content: 'Contenue de la notification 1',
-              isRead: true,
-            ),
-            NotificationTile(
-              title: 'Titre de la notification 2',
-              content: 'Contenue de la notification 2',
-              isRead: false,
-            ),
-            NotificationTile(
-              title: 'Titre de la notification 3',
-              content: 'Contenue de la notification 3',
-              isRead: true,
-            ),
-            NotificationTile(
-              title: 'Titre de la notification 4',
-              content: 'Contenue de la notification 4',
-              isRead: false,
-            ),
-            NotificationTile(
-              title: 'Titre de la notification 5',
-              content: 'Contenue de la notification 5',
-              isRead: true,
-            ),
-            NotificationTile(
-              title: 'Titre de la notification 6',
-              content: 'Contenue de la notification 6',
-              isRead: false,
-            ),
-          ],
-        ),
+      body: FutureBuilder<List<AppNotification>>(
+        future: _notificationsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erreur: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Aucune notification disponible'));
+          } else {
+            final notifications = snapshot.data!;
+            return ListView.builder(
+              itemCount: notifications.length,
+              itemBuilder: (context, index) {
+                final notification = notifications[index];
+                return NotificationTile(
+                  title: notification.titre,
+                  content: notification.message,
+                  isRead: notification.isRead,
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }
@@ -70,7 +68,7 @@ class NotificationTile extends StatelessWidget {
   final String content;
   final bool isRead;
 
-  NotificationTile({
+  const NotificationTile({super.key,
     required this.title,
     required this.content,
     required this.isRead,
@@ -101,3 +99,4 @@ class NotificationTile extends StatelessWidget {
     );
   }
 }
+
