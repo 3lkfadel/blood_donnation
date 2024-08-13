@@ -15,6 +15,8 @@ class _HomePageState extends State<HomePage> {
     "assets/learningpage/image3.png",
   ];
 
+  bool _hasNewNotifications = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,15 +29,44 @@ class _HomePageState extends State<HomePage> {
           child: Image.asset('assets/images/Icons/Icon.png'),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/NotificationPage');
-            },
-            icon: Icon(Icons.notifications, color: Colors.black),
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/NotificationPage');
+                },
+                icon: Icon(Icons.notifications, color: Colors.black),
+              ),
+              if (_hasNewNotifications)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 8,
+                      minHeight: 8,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '•',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
-      backgroundColor: Colors.white, // Set the background color of the entire Scaffold
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(20),
@@ -83,9 +114,9 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: ListTile(
                   leading: Text(
-                    'B+', 
+                    'B+',
                     style: TextStyle(
-                      color: Colors.red, 
+                      color: Colors.red,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -116,7 +147,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.grey.withOpacity(0.3),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3), 
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -131,7 +162,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               text,
               style: TextStyle(
-                fontSize: 12, 
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
