@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final List<String> imgList = [
+    "assets/learningpage/image3.png",
+    "assets/learningpage/image2.png",
+    "assets/learningpage/image3.png",
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,146 +28,117 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, color: Colors.black),
             onPressed: () {
-               Navigator.pushNamed(context, '/NotificationPage');
+              Navigator.pushNamed(context, '/NotificationPage');
             },
+            icon: Icon(Icons.notifications, color: Colors.black),
           ),
         ],
       ),
+      backgroundColor: Colors.white, // Set the background color of the entire Scaffold
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  color: Colors.red[50],
-                  borderRadius: BorderRadius.circular(12),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 200.0,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  aspectRatio: 16 / 9,
+                  viewportFraction: 0.8,
                 ),
-                child: PageView(
+                items: imgList.map((item) => Container(
+                  child: Center(
+                    child: Image.asset(item, fit: BoxFit.cover, width: 1000),
+                  ),
+                )).toList(),
+              ),
+              SizedBox(height: 30),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                   children: [
-                    Image.asset('name', fit: BoxFit.cover),
-                   
+                    _buildClickableElement(Icons.person, "Voir Mon Profil", '/ProfilePage'),
+                    _buildClickableElement(Icons.add_circle_outline, "Publier Annonce", '/demande'),
+                    _buildClickableElement(Icons.visibility, "Voir Annonce", '/Annoncepage'),
                   ],
                 ),
               ),
-              SizedBox(height: 16),
-              GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+              SizedBox(height: 15),
+              Text(
+                "ANNONCE",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
                 ),
-                itemBuilder: (context, index) {
-                  return Container(
-                    color: Colors.grey[300],
-                  );
-                },
-                itemCount: 4,
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 15),
               Card(
                 color: Colors.red[50],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage('name'),
+                  leading: Text(
+                    'B+', 
+                    style: TextStyle(
+                      color: Colors.red, 
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  title: Text('Koloma fadel'),
+                  title: Text('Koloma Fadel'),
                   subtitle: Text('Rue 24 Bobo'),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('B+', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.phone, color: Colors.red),
-                          SizedBox(width: 4),
-                          Icon(Icons.message, color: Colors.red),
-                        ],
-                      ),
-                    ],
+                  trailing: TextButton(
+                    onPressed: (){},
+                    child: Text("Répondre"),
                   ),
                 ),
               ),
-              Card(
-                color: Colors.red[50],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage('name'),
-                  ),
-                  title: Text('Koloma fadel'),
-                  subtitle: Text('Rue 24 Bobo'),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('B+', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.phone, color: Colors.red),
-                          SizedBox(width: 4),
-                          Icon(Icons.message, color: Colors.red),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-  color: Colors.red[50],
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(12),
-  ),
-  child: ListTile(
-    leading: CircleAvatar(
-      backgroundImage: AssetImage('name'),
-    ),
-    title: Text('Koloma fadel'),
-    subtitle: Text('Rue 24 Bobo'),
-    trailing: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('B+', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GestureDetector(
-              onTap: () {
-                print('Icône téléphone cliquée');
-              },
-              child: Icon(Icons.phone, color: Colors.red),
-            ),
-            SizedBox(width: 4),
-            GestureDetector(
-              onTap: () {
-                print('Icône message cliquée');
-              },
-              child: Icon(Icons.message, color: Colors.red),
-            ),
-          ],
-        ),
-      ],
-    ),
-  ),
-),
-
             ],
           ),
         ),
       ),
-     
+    );
+  }
+
+  Widget _buildClickableElement(IconData icon, String text, String routeName) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10.0),
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(121, 239, 19, 19),
+        borderRadius: BorderRadius.circular(25.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), 
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, routeName);
+        },
+        child: Column(
+          children: [
+            Icon(icon, size: 40, color: Color(0x80FFFFFF)),
+            SizedBox(width: 5),
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 12, 
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

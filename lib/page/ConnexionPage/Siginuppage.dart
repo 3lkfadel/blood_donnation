@@ -250,7 +250,7 @@ class _SiginuppageState extends State<Siginuppage> {
           ),
         ),
       ),
-      backgroundColor: const Color(0xFF5C9CEF),
+      backgroundColor: const Color(0xFFF9888E) ,
     );
   }
 }

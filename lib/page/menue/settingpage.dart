@@ -144,9 +144,9 @@ class SettingPage extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, '/DonationHistoryPage');
+                            Navigator.pushNamed(context, '/historique');
                           },
-                          child: _buildFeatureCard('Donation history', Icons.history, Colors.lightBlue[100]),
+                          child: _buildFeatureCard(' history', Icons.history, Colors.lightBlue[100]),
                         ),
                         InkWell(
                           onTap: () {

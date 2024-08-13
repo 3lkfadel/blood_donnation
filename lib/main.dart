@@ -9,6 +9,7 @@ import 'package:blood_donnation/page/menue/HomePage.dart';
 import 'package:blood_donnation/page/menue/NotificationPage.dart';
 import 'package:blood_donnation/page/menue/ProfilePage.dart';
 import 'package:blood_donnation/page/menue/demandePage.dart';
+import 'package:blood_donnation/page/menue/historique.dart';
 import 'package:blood_donnation/page/menue/settingpage.dart';
 import 'package:blood_donnation/page/restePassword/ResetPage1.dart';
 import 'package:blood_donnation/page/restePassword/resetPage2.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/NotificationPage': (context) => NotificationPage(),
         '/nav': (context) => Navroot(),
         '/ProfilePage': (context) => ProfilePage(),
+        '/historique' : (context)=>Historique(),
       },
       debugShowCheckedModeBanner: false,
       home: Learningpage1(),

@@ -17,7 +17,7 @@ class _NavrootState extends State<Navroot> {
    int _selectIndex = 0;
    final _screens =  [
     HomePage(),
-    FeedPage(),
+    // FeedPage(),
     Annoncepage(),
     SettingPage(),
 
@@ -64,10 +64,10 @@ class _NavrootState extends State<Navroot> {
           icon: Icon(Icons.home_filled),
           label: "",
         ),
-        BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.chat_bubble),
-          label: "",
-        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(CupertinoIcons.chat_bubble),
+        //   label: "",
+        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.calendar_month),
           label: "",
