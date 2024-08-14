@@ -118,6 +118,27 @@ class _DetailsState extends State<Details> {
                       ],
                     ),
                     SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          'Centre de santé : ',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+
+                          announcement['CentreSante'] ?? '',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+
+                      ],
+                    ),
+                    SizedBox(height: 8),
                    Row(
                     children: [
                        Text(
