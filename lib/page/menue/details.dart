@@ -70,6 +70,10 @@ class _DetailsState extends State<Details> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage: AssetImage("assetName"),
+                    ),
                     Text(
                       'Annonce:',
                       style: TextStyle(
@@ -93,27 +97,64 @@ class _DetailsState extends State<Details> {
                       ),
                     ),
                     SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                      'Groupe Sanguin : ',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
                     Text(
+                      
                       announcement['TypeSang'] ?? '',
                       style: TextStyle(
                         fontSize: 18,
                       ),
                     ),
+                    
+                      ],
+                    ),
                     SizedBox(height: 8),
+                   Row(
+                    children: [
+                       Text(
+                      'Description : ',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 10,),
                     Text(
                       announcement['description'] ?? 'Description indisponible',
                       style: TextStyle(
                         fontSize: 18,
                       ),
                     ),
+                    ],
+                   ),
                     SizedBox(height: 8),
-                    Text(
+                    Row(children: [
+                       Text(
+                      'Raison : ',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 10,),
+                      Text(
                       announcement['raison'] ?? '',
                       style: TextStyle(
                         fontSize: 18,
                       ),
                     ),
                     SizedBox(height: 32),
+                    ],),
+                    
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
