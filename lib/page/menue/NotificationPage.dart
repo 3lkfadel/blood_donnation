@@ -1,7 +1,8 @@
 import 'package:blood_donnation/config/Notification.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
+
+import 'details.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -53,6 +54,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   title: notification.titre,
                   content: notification.message,
                   isRead: notification.isRead,
+                  notificationId: notification.id,
                 );
               },
             );
@@ -67,43 +69,48 @@ class NotificationTile extends StatelessWidget {
   final String title;
   final String content;
   final bool isRead;
+  final int notificationId;
 
-  const NotificationTile({super.key,
+  const NotificationTile({
+    super.key,
     required this.title,
     required this.content,
     required this.isRead,
+    required this.notificationId,
   });
 
   @override
- Widget build(BuildContext context) {
-  return InkWell(
-    onTap: () {
-     
-      Navigator.pushNamed(context, '/details');
-    },
-    child: Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        leading: Icon(Icons.notifications),
-        title: Text(
-          title,
-          style: TextStyle(
-            decoration: isRead ? TextDecoration.lineThrough : null,
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Details(notificationId: notificationId),
+          ),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.symmetric(vertical: 8.0),
+        child: ListTile(
+          leading: Icon(Icons.notifications),
+          title: Text(
+            title,
+            style: TextStyle(
+              decoration: isRead ? TextDecoration.lineThrough : null,
+            ),
+          ),
+          subtitle: Text(content),
+          trailing: Icon(
+            Icons.circle,
+            color: isRead ? Colors.blue : Colors.red,
+            size: 16,
           ),
         ),
-        subtitle: Text(content),
-        trailing: Icon(
-          Icons.circle,
-          color: isRead ? Colors.blue : Colors.red,
-          size: 16,
-        ),
       ),
-    ),
-  );
+    );
+  }
 }
-
-}
-

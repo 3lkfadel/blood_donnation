@@ -249,5 +249,36 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getAnnouncementDetails(int annonce_id) async {
+    try {
+      final response = await _dio.get('${ApiEndpoints.annonces}/$annonce_id');
+
+      if (response.statusCode == 200) {
+        // Retourner les détails de l'annonce
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception('Échec de la récupération des détails de l\'annonce: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des détails de l\'annonce: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> getAnnonceByNotification(int notificationId) async {
+    try {
+      final response = await _dio.get('${ApiEndpoints.baseUrl}/notifications/$notificationId/annonce');
+
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception('Échec de la récupération de l\'annonce: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération de l\'annonce: $e');
+      rethrow;
+    }
+  }
+
 
 }

@@ -53,7 +53,8 @@ class MyApp extends StatelessWidget {
         '/nav': (context) => Navroot(),
         '/ProfilePage': (context) => ProfilePage(),
         '/historique' : (context)=>Historique(),
-        '/details':(context) =>Details(),
+        '/details': (context) => Details(notificationId: ModalRoute.of(context)?.settings.arguments as int),
+
       },
       debugShowCheckedModeBanner: false,
       home: Learningpage1(),
