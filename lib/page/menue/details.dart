@@ -96,6 +96,44 @@ class _DetailsState extends State<Details> {
                         fontSize: 18,
                       ),
                     ),
+                    SizedBox(height: 8),
+                    Wrap(
+                      children: [
+                        Text(
+                          'Email : ',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          user['email'] ?? '',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Wrap(
+                      children: [
+                        Text(
+                          'Numero de téléphone : ',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          user['telephone'] ?? '',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 16),
                     Text(
                       'Annonce:',
