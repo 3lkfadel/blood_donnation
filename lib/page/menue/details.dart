@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
+import 'package:blood_donnation/config/config.dart';
 
 class Details extends StatefulWidget {
   final int notificationId;
@@ -63,6 +64,12 @@ class _DetailsState extends State<Details> {
             return Center(child: Text('Aucune donnée disponible.'));
           } else {
             final announcement = snapshot.data!;
+            final annonce= announcement['annonce'] ?? {};
+            final user = announcement['user'] ?? {};
+            final userName = '${user['name']}';
+            const String baseurl = ApiEndpoints.imageurl;
+            final userPhotoUrl = user['image'] as String?;
+
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Padding(
@@ -72,8 +79,24 @@ class _DetailsState extends State<Details> {
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage: AssetImage("assetName"),
+                      backgroundImage: userPhotoUrl != null && userPhotoUrl.isNotEmpty
+                          ? NetworkImage('$baseurl$userPhotoUrl')
+                          : AssetImage("assetName") as ImageProvider,
                     ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Nom et Prénom:',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    Text(
+                      userName.isNotEmpty ? userName : 'Indisponible',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    SizedBox(height: 16),
                     Text(
                       'Annonce:',
                       style: TextStyle(
@@ -83,7 +106,7 @@ class _DetailsState extends State<Details> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      announcement['titre'] ?? 'Indisponible',
+                      annonce['titre'] ?? 'Indisponible',
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -100,21 +123,19 @@ class _DetailsState extends State<Details> {
                     Row(
                       children: [
                         Text(
-                      'Groupe Sanguin : ',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      
-                      announcement['TypeSang'] ?? '',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    
+                          'Groupe Sanguin : ',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          annonce['TypeSang'] ?? '',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 8),
@@ -129,53 +150,52 @@ class _DetailsState extends State<Details> {
                         ),
                         SizedBox(width: 8),
                         Text(
-
-                          announcement['CentreSante'] ?? '',
+                          annonce['CentreSante'] ?? '',
                           style: TextStyle(
                             fontSize: 18,
                           ),
                         ),
-
                       ],
                     ),
                     SizedBox(height: 8),
-                   Wrap(
-                    children: [
-                       Text(
-                      'Description : ',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Wrap(
+                      children: [
+                        Text(
+                          'Description : ',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          annonce['description'] ?? 'Description indisponible',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 10,),
-                    Text(
-                      announcement['description'] ?? 'Description indisponible',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    ],
-                   ),
                     SizedBox(height: 8),
-                    Row(children: [
-                       Text(
-                      'Raison : ',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: 10,),
-                      Text(
-                      announcement['raison'] ?? '',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          'Raison : ',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          annonce['raison'] ?? '',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 32),
-                    ],),
-                    
                     Center(
                       child: ElevatedButton(
                         onPressed: () {

@@ -10,4 +10,5 @@ class ApiEndpoints {
   static const String fcm ='$baseUrl/fcm';
   static const String notification = '$baseUrl/notifications';
   static const String history = '$baseUrl/historiques';
+  static const String imageurl = 'http://192.168.11.120:8000/storage/';
 }
