@@ -139,7 +139,7 @@ class _DetailsState extends State<Details> {
                       ],
                     ),
                     SizedBox(height: 8),
-                   Row(
+                   Wrap(
                     children: [
                        Text(
                       'Description : ',
