@@ -5,6 +5,7 @@ import 'package:blood_donnation/page/ConnexionPage/groupeselectionpage.dart';
 import 'package:blood_donnation/page/Learningpage/learningpage2.dart';
 import 'package:blood_donnation/page/learningpage/LearningPage1.dart';
 import 'package:blood_donnation/page/learningpage/learningpage3.dart';
+import 'package:blood_donnation/page/menue/DemanderInformation.dart';
 import 'package:blood_donnation/page/menue/HomePage.dart';
 import 'package:blood_donnation/page/menue/NotificationPage.dart';
 import 'package:blood_donnation/page/menue/ProfilePage.dart';
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
         '/ProfilePage': (context) => ProfilePage(),
         '/historique' : (context)=>Historique(),
         '/details': (context) => Details(notificationId: ModalRoute.of(context)?.settings.arguments as int),
+        '/DemanderInformation' : (context) => DemanderInformation()
 
       },
       debugShowCheckedModeBanner: false,
