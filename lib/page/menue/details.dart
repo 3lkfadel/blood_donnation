@@ -3,9 +3,10 @@ import 'package:blood_donnation/api.dart';
 import 'package:blood_donnation/config/config.dart';
 
 class Details extends StatefulWidget {
-  final int notificationId;
+  final int? notificationId;
+  final int? annonceId;
 
-  const Details({super.key, required this.notificationId});
+  const Details({super.key, this.notificationId, this.annonceId});
 
   @override
   State<Details> createState() => _DetailsState();
@@ -17,8 +18,13 @@ class _DetailsState extends State<Details> {
   @override
   void initState() {
     super.initState();
-    // Fetch the announcement details using the notificationId
-    _announcementFuture = ApiService().getAnnonceByNotification(widget.notificationId);
+    if (widget.annonceId != null) {
+      // Fetch the announcement details using the annonceId
+      _announcementFuture = ApiService().getAnnouncementDetails(widget.annonceId!);
+    } else if (widget.notificationId != null) {
+      // Fetch the announcement details using the notificationId
+      _announcementFuture = ApiService().getAnnonceByNotification(widget.notificationId!);
+    }
   }
 
   @override
@@ -64,7 +70,7 @@ class _DetailsState extends State<Details> {
             return Center(child: Text('Aucune donnée disponible.'));
           } else {
             final announcement = snapshot.data!;
-            final annonce= announcement['annonce'] ?? {};
+            final annonce = announcement['annonce'] ?? {};
             final user = announcement['user'] ?? {};
             final userName = '${user['name']}';
             const String baseurl = ApiEndpoints.imageurl;

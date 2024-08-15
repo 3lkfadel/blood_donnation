@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
 
+import 'details.dart';
+
 class Annoncepage extends StatefulWidget {
   Annoncepage({super.key});
 
@@ -130,7 +132,16 @@ class _AnnoncepageState extends State<Annoncepage> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          TextButton(onPressed: (){}, child: Text("Répondre")),
+                          TextButton(
+                              onPressed: () {
+                              Navigator.push(
+                              context,
+                               MaterialPageRoute(
+                               builder: (context) => Details(annonceId: annonce['id']),
+                                 ),
+                              );
+                             },
+                              child: Text("Répondre")),
                         ],
                       ),
                     ],

@@ -54,7 +54,14 @@ class MyApp extends StatelessWidget {
         '/nav': (context) => Navroot(),
         '/ProfilePage': (context) => ProfilePage(),
         '/historique' : (context)=>Historique(),
-        '/details': (context) => Details(notificationId: ModalRoute.of(context)?.settings.arguments as int),
+        '/details': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+          final notificationId = args['notificationId'] as int?;
+          final annonceId = args['annonceId'] as int?;
+
+          return Details(notificationId: notificationId, annonceId: annonceId);
+        },
+
         '/DemanderInformation' : (context) => DemanderInformation()
 
       },

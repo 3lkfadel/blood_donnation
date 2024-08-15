@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:blood_donnation/api.dart';
 
+import 'details.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,13 +30,13 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchAnnouncements() async {
     try {
       final announcements = await _apiService.getAnnouncements();
-      print('Fetched announcements: $announcements'); // Ajoutez ceci pour déboguer
+      print('Fetched announcements: $announcements');
       setState(() {
         _announcements = announcements;
       });
     } catch (e) {
       print('Failed to load announcements: $e');
-      // Vous pouvez afficher un message d'erreur ici
+
     }
   }
 
@@ -158,8 +160,16 @@ class _HomePageState extends State<HomePage> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                TextButton(onPressed: () {}, child: Text(
-                                    "Répondre")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Details(annonceId: annonce['id']),
+                                        ),
+                                      );
+                                    },
+                                    child: Text("Répondre")),
                               ],
                             ),
                           ],
