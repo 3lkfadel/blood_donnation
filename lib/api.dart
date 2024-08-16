@@ -280,5 +280,18 @@ class ApiService {
     }
   }
 
+  Future<void> markNotificationAsRead(int notificationId) async {
+    try {
+      final response = await _dio.post('${ApiEndpoints.mark}/$notificationId');
+      if (response.statusCode == 200) {
+        print('Notification marquée comme lue.');
+      } else {
+        print('Erreur: ${response.data['message']}');
+      }
+    } catch (e) {
+      print('Erreur lors de la mise à jour de la notification: $e');
+    }
+  }
+
 
 }
