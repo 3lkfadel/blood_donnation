@@ -205,7 +205,7 @@ Future<void> _sendMessage(String phoneNumber) async {
                       ],
                     ),
                     SizedBox(height: 8),
-                    Row(
+                    Wrap(
                       children: [
                         Text(
                           'Centre de santé : ',

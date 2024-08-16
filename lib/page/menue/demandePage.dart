@@ -210,7 +210,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                 value: _selectedHealthCenter,
                 items: _healthCenters.map((center) {
                   return DropdownMenuItem<String>(
-                    value: center['id'].toString(),
+                    value: center['nom'].toString(),
                     child:
                         Wrap(
                           children: [
