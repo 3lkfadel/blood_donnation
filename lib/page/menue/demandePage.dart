@@ -18,13 +18,27 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
   String? _reason;
   String? _title;
   String? _description;
-  String? _healthCenter;
+  String? _selectedHealthCenter;
+  List<Map<String, dynamic>> _healthCenters = [];
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
     _loadUserProfile();
+    _loadHealthCenters();
+  }
+
+  Future<void> _loadHealthCenters() async {
+    try {
+      final centers = await _apiService.getCentresSante();
+      setState(() {
+        _healthCenters = centers;
+      });
+    } catch (e) {
+      print('Failed to load health centers: $e');
+      // Gérer l'erreur ou afficher un message
+    }
   }
 
 
@@ -55,7 +69,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
           _description!,
           _reason!,
           _bloodType!,
-          _healthCenter!,
+          _selectedHealthCenter!,
         );
         if (response.statusCode == 201) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -189,19 +203,40 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                   return null;
                 },
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Centre de santé'),
-                onSaved: (value) {
-                  _healthCenter = value;
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                    labelText: 'Centre de santé',
+                ),
+                value: _selectedHealthCenter,
+                items: _healthCenters.map((center) {
+                  return DropdownMenuItem<String>(
+                    value: center['id'].toString(),
+                    child:
+                        Wrap(
+                          children: [
+                            Text(
+                              center['nom'],
+                              softWrap: true,
+                                ),
+                          ],
+                        ),
+
+
+
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedHealthCenter = value;
+                  });
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer le centre de santé';
+                    return 'Veuillez sélectionner un centre de santé';
                   }
                   return null;
                 },
               ),
-
               SizedBox(height: 16),
               Text('Type de sang'),
               Wrap(

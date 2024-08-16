@@ -279,7 +279,25 @@ class ApiService {
       rethrow;
     }
   }
+  // recuperer les centres de santé
+  Future<List<Map<String, dynamic>>> getCentresSante() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.centre);
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        // Convert dynamic list to a list of maps
+        return data.map((item) => item as Map<String, dynamic>).toList();
+      } else {
+        throw Exception('Failed to load centres de santé');
+      }
+    } catch (e) {
+      print('Error fetching centres de santé: $e');
+      rethrow;
+    }
+  }
 
+// supprimer une annonce
+// marquer une notification
   Future<void> markNotificationAsRead(int notificationId) async {
     try {
       final response = await _dio.post('${ApiEndpoints.mark}/$notificationId');

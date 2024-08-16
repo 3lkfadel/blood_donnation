@@ -11,5 +11,6 @@ class ApiEndpoints {
   static const String notification = '$baseUrl/notifications';
   static const String mark = '$baseUrl/mark';
   static const String history = '$baseUrl/historiques';
+  static const String centre = '$baseUrl/centres';
   static const String imageurl = 'http://192.168.11.112:8000/storage/';
 }
