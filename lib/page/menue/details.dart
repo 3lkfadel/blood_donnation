@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
 import 'package:blood_donnation/config/config.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Details extends StatefulWidget {
   final int? notificationId;
@@ -19,13 +20,33 @@ class _DetailsState extends State<Details> {
   void initState() {
     super.initState();
     if (widget.annonceId != null) {
-      // Fetch the announcement details using the annonceId
       _announcementFuture = ApiService().getAnnouncementDetails(widget.annonceId!);
     } else if (widget.notificationId != null) {
-      // Fetch the announcement details using the notificationId
       _announcementFuture = ApiService().getAnnonceByNotification(widget.notificationId!);
     }
   }
+Future<void> _makePhoneCall(String phoneNumber) async {
+  final Uri url = Uri.parse('tel:$phoneNumber');
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Impossible de passer l'appel")),
+    );
+  }
+}
+
+Future<void> _sendMessage(String phoneNumber) async {
+  final Uri url = Uri.parse('sms:$phoneNumber');
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Impossible d'envoyer le message")),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +96,7 @@ class _DetailsState extends State<Details> {
             final userName = '${user['name']}';
             const String baseurl = ApiEndpoints.imageurl;
             final userPhotoUrl = user['image'] as String?;
+            final userPhoneNumber = user['telephone'] ?? '';
 
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -133,7 +155,7 @@ class _DetailsState extends State<Details> {
                         ),
                         SizedBox(width: 10),
                         Text(
-                          user['telephone'] ?? '',
+                          userPhoneNumber,
                           style: TextStyle(
                             fontSize: 18,
                           ),
@@ -242,10 +264,19 @@ class _DetailsState extends State<Details> {
                     SizedBox(height: 32),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Logic to contact
-                        },
-                        child: Text('Prendre contact'),
+                        onPressed: () => _makePhoneCall(userPhoneNumber),
+                        child: Text('Appelle'),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          textStyle: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () => _sendMessage(userPhoneNumber),
+                        child: Text('Message'),
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           textStyle: TextStyle(fontSize: 18),

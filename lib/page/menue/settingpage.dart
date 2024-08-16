@@ -168,9 +168,9 @@ class SettingPage extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, '/MyPostPage');
+                            Navigator.pushNamed(context, '/login');
                           },
-                          child: _buildFeatureCard('My post', Icons.post_add, Colors.green[100]),
+                          child: _buildFeatureCard('Log out', Icons.logout, Colors.green[100]),
                         ),
                       ],
                     ),
