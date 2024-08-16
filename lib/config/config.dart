@@ -1,6 +1,6 @@
 
 class ApiEndpoints {
-  static const String baseUrl = 'http://172.20.10.3:8000/api';
+  static const String baseUrl = 'http://192.168.11.112:8000/api';
   static const String register = '$baseUrl/register';
   static const String login = '$baseUrl/login';
   static const String profile = '$baseUrl/profile';
@@ -10,5 +10,5 @@ class ApiEndpoints {
   static const String fcm ='$baseUrl/fcm';
   static const String notification = '$baseUrl/notifications';
   static const String history = '$baseUrl/historiques';
-  static const String imageurl = 'http://172.20.10.3:8000/storage/';
+  static const String imageurl = 'http://192.168.11.112:8000/storage/';
 }
