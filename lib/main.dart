@@ -9,6 +9,8 @@ import 'package:blood_donnation/page/menue/DemanderInformation.dart';
 import 'package:blood_donnation/page/menue/HomePage.dart';
 import 'package:blood_donnation/page/menue/NotificationPage.dart';
 import 'package:blood_donnation/page/menue/ProfilePage.dart';
+import 'package:blood_donnation/page/menue/UserDons.dart';
+import 'package:blood_donnation/page/menue/annoncepage.dart';
 import 'package:blood_donnation/page/menue/demandePage.dart';
 import 'package:blood_donnation/page/menue/details.dart';
 import 'package:blood_donnation/page/menue/historique.dart';
@@ -50,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/selectionsang': (context) => BloodGroupSelectionScreen(),
         '/homepage': (context) => HomePage(),
         '/demande': (context) => BloodDonationFormPage(),
+        '/annonce': (context) => Annoncepage(),
         '/NotificationPage': (context) => NotificationPage(),
         '/nav': (context) => Navroot(),
         '/ProfilePage': (context) => ProfilePage(),
@@ -61,6 +64,7 @@ class MyApp extends StatelessWidget {
 
           return Details(notificationId: notificationId, annonceId: annonceId);
         },
+
 
         '/DemanderInformation' : (context) => DemanderInformation()
 

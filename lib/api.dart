@@ -8,7 +8,8 @@ class ApiService {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   ApiService() {
-    _dio.options.baseUrl = ApiEndpoints.baseUrl; // Utiliser la constante de baseUrl
+    _dio.options.baseUrl =
+        ApiEndpoints.baseUrl; // Utiliser la constante de baseUrl
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         String? token = await _storage.read(key: 'auth_token');
@@ -27,7 +28,8 @@ class ApiService {
     await _storage.write(key: 'auth_token', value: token);
   }
 
-  Future<Response> register(String name, String email, String numero, String password, String passwordConfirmation) async {
+  Future<Response> register(String name, String email, String numero,
+      String password, String passwordConfirmation) async {
     final response = await _dio.post(
       ApiEndpoints.register, // Utiliser l'URL de l'API
       data: {
@@ -69,10 +71,12 @@ class ApiService {
       } else {
         final responseData = response.data;
         if (responseData != null && responseData is Map<String, dynamic>) {
-          final errorMessage = responseData['message'] ?? 'Échec de la connexion';
+          final errorMessage = responseData['message'] ??
+              'Échec de la connexion';
           throw Exception(errorMessage);
         } else {
-          throw Exception('Échec de la connexion avec statut: ${response.statusCode}');
+          throw Exception(
+              'Échec de la connexion avec statut: ${response.statusCode}');
         }
       }
     } on DioException catch (e) {
@@ -115,7 +119,8 @@ class ApiService {
       if (pays != null) 'pays': pays,
     });
 
-    final response = await _dio.post(ApiEndpoints.updateProfile, data: formData);
+    final response = await _dio.post(
+        ApiEndpoints.updateProfile, data: formData);
     return response;
   }
 
@@ -129,7 +134,8 @@ class ApiService {
       if (response.statusCode == 200) {
         print('Groupe sanguin mis à jour');
       } else {
-        throw Exception('Échec de la mise à jour du groupe sanguin: ${response.data['message']}');
+        throw Exception('Échec de la mise à jour du groupe sanguin: ${response
+            .data['message']}');
       }
 
       return response;
@@ -153,7 +159,8 @@ class ApiService {
     }
   }
 
-  Future<Response> postAnnouncement(String title, String content, String raison, String typeSang, String centreSante) async {
+  Future<Response> postAnnouncement(String title, String content, String raison,
+      String typeSang, String centreSante) async {
     final FormData formData = FormData.fromMap({
       'titre': title,
       'description': content,
@@ -257,7 +264,9 @@ class ApiService {
         // Retourner les détails de l'annonce
         return response.data as Map<String, dynamic>;
       } else {
-        throw Exception('Échec de la récupération des détails de l\'annonce: ${response.statusCode}');
+        throw Exception(
+            'Échec de la récupération des détails de l\'annonce: ${response
+                .statusCode}');
       }
     } catch (e) {
       print('Erreur lors de la récupération des détails de l\'annonce: $e');
@@ -265,20 +274,24 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> getAnnonceByNotification(int notificationId) async {
+  Future<Map<String, dynamic>> getAnnonceByNotification(
+      int notificationId) async {
     try {
-      final response = await _dio.get('${ApiEndpoints.baseUrl}/notifications/$notificationId/annonce');
+      final response = await _dio.get(
+          '${ApiEndpoints.baseUrl}/notifications/$notificationId/annonce');
 
       if (response.statusCode == 200) {
         return response.data as Map<String, dynamic>;
       } else {
-        throw Exception('Échec de la récupération de l\'annonce: ${response.statusCode}');
+        throw Exception(
+            'Échec de la récupération de l\'annonce: ${response.statusCode}');
       }
     } catch (e) {
       print('Erreur lors de la récupération de l\'annonce: $e');
       rethrow;
     }
   }
+
   // recuperer les centres de santé
   Future<List<Map<String, dynamic>>> getCentresSante() async {
     try {
@@ -308,6 +321,91 @@ class ApiService {
       }
     } catch (e) {
       print('Erreur lors de la mise à jour de la notification: $e');
+    }
+  }
+
+  // Créer un don
+  Future<void> createDon(int annonceId, String userId) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.don, data: {
+        'annonce_id': annonceId,
+        'user_id': userId,
+        'etat': 'en attente',
+      });
+
+      if (response.statusCode == 201) {
+        print('Don créé avec succès');
+      } else {
+        throw Exception(
+            'Échec de la création du don: ${response.data['message']}');
+      }
+    } catch (e) {
+      print('Erreur lors de la création du don: $e');
+      rethrow;
+    }
+  }
+
+  // les dons d'une annonce
+  Future<List<Map<String, dynamic>>> getDonsForAnnonce(int annonceId) async {
+    try {
+      final response = await _dio.get(ApiEndpoints.donsForAnnonce(annonceId));
+
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(response.data);
+      } else {
+        throw Exception('Erreur lors de la récupération des dons: ${response
+            .data['message']}');
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des dons: $e');
+      rethrow;
+    }
+  }
+
+  // desactiver l'annonce
+  Future<void> desactiverAnnonce(int annonceId) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.annonceEtat(annonceId));
+      if (response.statusCode == 200) {
+        print('Annonce désactivée avec succès');
+      } else {
+        throw Exception(
+            'Erreur lors de la désactivation de l\'annonce: ${response.data['message']}');
+      }
+    } catch (e) {
+      print('Erreur lors de la désactivation de l\'annonce: $e');
+      rethrow;
+    }
+  }
+
+  //les dons de l'utilisateur connecté
+  Future<List<Map<String, dynamic>>> getConfirmedDons() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.myDon);
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(response.data);
+      } else {
+        throw Exception('Erreur lors de la récupération des dons : ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des dons : $e');
+      rethrow;
+    }
+  }
+
+  //confirmer don
+  Future<void> confirmDon(int donId) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.donConfirmation(donId));
+      if (response.statusCode == 200) {
+        print('Don confirmé avec succès');
+      } else {
+        throw Exception(
+            'Erreur lors de la confirmation du don: ${response.data['message']}');
+      }
+    } catch (e) {
+      print('Erreur lors de la confirmation du don: $e');
+      rethrow;
     }
   }
 

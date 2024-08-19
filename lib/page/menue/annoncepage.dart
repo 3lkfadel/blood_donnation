@@ -13,11 +13,13 @@ class Annoncepage extends StatefulWidget {
 class _AnnoncepageState extends State<Annoncepage> {
   final ApiService _apiService = ApiService();
   List<Map<String, dynamic>> _announcements = [];
+  String? _userId;
 
   @override
   void initState() {
     super.initState();
     _fetchAnnouncements();
+    _fetchUserProfile();
   }
 
   Future<void> _fetchAnnouncements() async {
@@ -32,6 +34,18 @@ class _AnnoncepageState extends State<Annoncepage> {
       // Vous pouvez afficher un message d'erreur ici
     }
   }
+
+  Future<void> _fetchUserProfile() async {
+    try {
+      final profileData = await _apiService.getProfiles();
+      setState(() {
+        _userId = profileData['id'].toString(); // Stocke l'ID de l'utilisateur connecté
+      });
+    } catch (e) {
+      print('Erreur lors de la récupération du profil : $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +147,20 @@ class _AnnoncepageState extends State<Annoncepage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                try {
+                                  await _apiService.createDon(annonce['id'], _userId!);
+                                  // Afficher un message de succès ou naviguer vers une autre page
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    content: Text('Demande envoyée avec succès.'),
+                                  ));
+                                } catch (e) {
+                                  // Gérer l'erreur (afficher un message, etc.)
+                                  print('Erreur: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    content: Text('Erreur lors de l\'envoi de la demande.'),
+                                  ));
+                                }
                               Navigator.push(
                               context,
                                MaterialPageRoute(
