@@ -17,7 +17,15 @@ class _MapScreenState extends State<MapScreen> {
       position: _pGooglePlex,
       infoWindow: InfoWindow(title: 'Google Plex'),
     ),
+    Marker(
+      markerId: MarkerId('8G59+R3'),
+      position: LatLng(12.3612, -1.5167), // Coordonnées de Ouagadougou
+      infoWindow: InfoWindow(title: 'Ouagadougou'),
+    ),
   };
+
+  GoogleMapController? _mapController;
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -36,17 +44,63 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  void _searchAndNavigate() {
+    String searchQuery = _searchController.text.toLowerCase();
+    Marker? marker = _markers.firstWhere(
+      (marker) => marker.infoWindow.title!.toLowerCase() == searchQuery,
+      orElse: () => Marker(markerId: MarkerId('')),
+    );
+
+    if (marker.markerId.value.isNotEmpty && _mapController != null) {
+      _mapController!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: marker.position,
+            zoom: 15,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Point non trouvé')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Carte avec Points')),
+      appBar: AppBar(
+        title: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Rechercher un point...',
+            border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.white60),
+          ),
+          style: TextStyle(color: Colors.white, fontSize: 18.0),
+          textInputAction: TextInputAction.search,
+          onSubmitted: (value) {
+            _searchAndNavigate();
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: _searchAndNavigate,
+          ),
+        ],
+      ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: _pGooglePlex,
           zoom: 13,
         ),
         markers: _markers,
-        myLocationEnabled: true, // Afficher la position actuelle de l'utilisateur si permission accordée
+        onMapCreated: (GoogleMapController controller) {
+          _mapController = controller;
+        },
+        myLocationEnabled: true,
       ),
     );
   }
