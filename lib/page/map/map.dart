@@ -71,18 +71,29 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: 'Rechercher un point...',
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.white60),
+        title: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18.0),
+            border: Border.all(
+              color: Colors.grey, 
+              width: 2.0, 
+            ),
           ),
-          style: TextStyle(color: Colors.white, fontSize: 18.0),
-          textInputAction: TextInputAction.search,
-          onSubmitted: (value) {
-            _searchAndNavigate();
-          },
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Rechercher un point',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+              hintStyle: TextStyle(color: Colors.grey),
+            ),
+            style: TextStyle(color: Colors.black, fontSize: 18.0),
+            textInputAction: TextInputAction.search,
+            onSubmitted: (value) {
+              _searchAndNavigate();
+            },
+          ),
         ),
         actions: [
           IconButton(
