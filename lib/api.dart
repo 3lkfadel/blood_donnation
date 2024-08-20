@@ -1,3 +1,4 @@
+import 'package:blood_donnation/page/map/centreSante.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:blood_donnation/config/config.dart';
@@ -409,5 +410,21 @@ class ApiService {
     }
   }
 
+  //obtenir les centre de santé sous forme de list
+  Future<List<HealthCenter>> fetchHealthCenters() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.centre);
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        return data.map((json) => HealthCenter.fromJson(json)).toList();
+      } else {
+        throw Exception(
+            'Failed to fetch health centers: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching health centers: $e');
+      rethrow;
+    }
+  }
 
 }
