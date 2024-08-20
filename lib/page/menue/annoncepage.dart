@@ -109,7 +109,9 @@ class _AnnoncepageState extends State<Annoncepage> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/map');
+                  },
                   icon: Icon(Icons.favorite),
                   label: Text('Centre de don'),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey,

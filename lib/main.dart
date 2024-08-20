@@ -5,6 +5,7 @@ import 'package:blood_donnation/page/ConnexionPage/groupeselectionpage.dart';
 import 'package:blood_donnation/page/Learningpage/learningpage2.dart';
 import 'package:blood_donnation/page/learningpage/LearningPage1.dart';
 import 'package:blood_donnation/page/learningpage/learningpage3.dart';
+import 'package:blood_donnation/page/map/map.dart';
 import 'package:blood_donnation/page/menue/DemanderInformation.dart';
 import 'package:blood_donnation/page/menue/HomePage.dart';
 import 'package:blood_donnation/page/menue/NotificationPage.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         '/nav': (context) => Navroot(),
         '/ProfilePage': (context) => ProfilePage(),
         '/historique' : (context)=>Historique(),
+        '/map':(context)=> MapScreen(),
         '/details': (context) {
           final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
           final notificationId = args['notificationId'] as int?;
