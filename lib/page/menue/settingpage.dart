@@ -146,13 +146,13 @@ class SettingPage extends StatelessWidget {
                           onTap: () {
                             Navigator.pushNamed(context, '/historique');
                           },
-                          child: _buildFeatureCard(' Histororique', Icons.history, Colors.lightBlue[100]),
+                          child: _buildFeatureCard(context, ' xx', Icons.history, Colors.lightBlue[100]),
                         ),
                         InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/ProfilePage');
                           },
-                          child: _buildFeatureCard('Editer profil', Icons.edit, Colors.lightBlue[200]),
+                          child: _buildFeatureCard(context, 'Editer profil', Icons.edit, Colors.lightBlue[200]),
                         ),
                       ],
                     ),
@@ -164,13 +164,13 @@ class SettingPage extends StatelessWidget {
                           onTap: () {
                             Navigator.pushNamed(context, '/BloodPointPage');
                           },
-                          child: _buildFeatureCard('Blood point', Icons.bloodtype, Colors.red[100]),
+                          child: _buildFeatureCard(context, 'Blood point', Icons.bloodtype, Colors.red[100]),
                         ),
                         InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/login');
                           },
-                          child: _buildFeatureCard('Log out', Icons.logout, Colors.green[100]),
+                          child: _buildFeatureCard(context, 'Log out', Icons.logout, Colors.green[100]),
                         ),
                       ],
                     ),
@@ -186,19 +186,25 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureCard(String title, IconData icon, Color? color) {
-    return Expanded(
+  Widget _buildFeatureCard(BuildContext context, String title, IconData icon, Color? color) {
+    return SizedBox(
+              width: MediaQuery.of(context).size.width * 0.45,
+              height: 100,
       child: Card(
         color: color,
+        shadowColor: Colors.red.withOpacity(0.3),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SizedBox(
           child: Column(
             children: [
+              const SizedBox(height: 10,),
               Icon(icon, size: 40, color: Colors.black54),
-              SizedBox(height: 8),
+             const SizedBox(height: 8),
               Text(title, textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
             ],
           ),

@@ -43,18 +43,19 @@ class Learningpage2 extends StatelessWidget {
                   "Don Don Vital a été créé pour répondre à un besoin crucial : simplifier le processus de don de sang. Notre application permet de mettre en relation directe les donneurs et les receveurs, assurant ainsi une réponse rapide et efficace aux urgences et aux besoins continus de sang. Nous visons à créer une communauté solidaire et réactive.",
                   style: TextStyle(
                     fontSize: 15,
+                    
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.justify,
                 ),
                 SizedBox(height: 20), 
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: (){
                        Navigator.pushNamed(context, '/leraningpage3');
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.blue, 
+                      foregroundColor: Colors.white, backgroundColor:Color.fromARGB(255, 218, 56, 27), 
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                     child: Text("Next"),

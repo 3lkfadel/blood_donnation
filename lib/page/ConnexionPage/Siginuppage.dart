@@ -98,14 +98,14 @@ class _SiginuppageState extends State<Siginuppage> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                offset: const Offset(0, 7),
-                blurRadius: 7,
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.grey.withOpacity(0.5),
+            //     spreadRadius: 5,
+            //     offset: const Offset(0, 7),
+            //     blurRadius: 7,
+            //   ),
+            // ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

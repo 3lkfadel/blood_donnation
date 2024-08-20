@@ -10,7 +10,7 @@ class Learningpage1 extends StatelessWidget {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-         color: Colors.white,
+        color: Colors.white,
         padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,17 +44,17 @@ class Learningpage1 extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 15,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.justify, // Justifier le texte pour une répartition uniforme
                 ),
                 SizedBox(height: 20), // Espace entre le texte et le bouton
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.center, // Centrer le bouton
                   child: ElevatedButton(
                     onPressed: (){
-                       Navigator.pushNamed(context, '/leraningpage2');
+                      Navigator.pushNamed(context, '/leraningpage2');
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.blue, // Couleur du texte du bouton
+                      foregroundColor: Colors.white, backgroundColor: Color.fromARGB(255, 218, 56, 27), // Couleur du texte du bouton
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                     child: Text("Next"),
