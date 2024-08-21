@@ -25,60 +25,41 @@ class _DetailsState extends State<Details> {
       _announcementFuture = ApiService().getAnnonceByNotification(widget.notificationId!);
     }
   }
-Future<void> _makePhoneCall(String phoneNumber) async {
-  final Uri url = Uri.parse('tel:$phoneNumber');
-  if (await canLaunchUrl(url)) {
-    await launchUrl(url);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Impossible de passer l'appel")),
-    );
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri url = Uri.parse('tel:$phoneNumber');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Impossible de passer l'appel")),
+      );
+    }
   }
-}
 
-Future<void> _sendMessage(String phoneNumber) async {
-  final Uri url = Uri.parse('sms:$phoneNumber');
-  if (await canLaunchUrl(url)) {
-    await launchUrl(url);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Impossible d'envoyer le message")),
-    );
+  Future<void> _sendMessage(String phoneNumber) async {
+    final Uri url = Uri.parse('sms:$phoneNumber');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Impossible d'envoyer le message")),
+      );
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'DET',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'AILS',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        backgroundColor: Color.fromARGB(255, 218, 56, 27),
+        title: Text(
+          'Détails de l\'Annonce',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        centerTitle: true,
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _announcementFuture,
@@ -98,189 +79,132 @@ Future<void> _sendMessage(String phoneNumber) async {
             final userPhotoUrl = user['image'] as String?;
             final userPhoneNumber = user['telephone'] ?? '';
 
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: userPhotoUrl != null && userPhotoUrl.isNotEmpty
-                          ? NetworkImage('$baseurl$userPhotoUrl')
-                          : AssetImage("assetName") as ImageProvider,
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Nom et Prénom:',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Text(
-                      userName.isNotEmpty ? userName : 'Indisponible',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Wrap(
-                      children: [
-                        Text(
-                          'Email : ',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          user['email'] ?? '',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Wrap(
-                      children: [
-                        Text(
-                          'Numero de téléphone : ',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          userPhoneNumber,
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Annonce:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      annonce['titre'] ?? 'Indisponible',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Information de demande:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
+                    // User Photo and Name
                     Row(
                       children: [
-                        Text(
-                          'Groupe Sanguin : ',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: userPhotoUrl != null && userPhotoUrl.isNotEmpty
+                              ? NetworkImage('$baseurl$userPhotoUrl')
+                              : AssetImage("assets/placeholder.png") as ImageProvider,
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          annonce['TypeSang'] ?? '',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Wrap(
-                      children: [
-                        Text(
-                          'Centre de santé : ',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          annonce['CentreSante'] ?? '',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
+                        SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              userName.isNotEmpty ? userName : 'Indisponible',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Email: ${user['email'] ?? 'Indisponible'}',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Téléphone: $userPhoneNumber',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    SizedBox(height: 8),
-                    Wrap(
-                      children: [
-                        Text(
-                          'Description : ',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                    SizedBox(height: 24),
+                    // Announcement Details
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 6,
+                            offset: Offset(0, 4),
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          annonce['description'] ?? 'Description indisponible',
-                          style: TextStyle(
-                            fontSize: 18,
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Annonce:',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          'Raison : ',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                          SizedBox(height: 8),
+                          Text(
+                            annonce['titre'] ?? 'Indisponible',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          annonce['raison'] ?? '',
-                          style: TextStyle(
-                            fontSize: 18,
+                          SizedBox(height: 16),
+                          Text(
+                            'Informations de la demande:',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 8),
+                          Text(
+                            'Groupe Sanguin: ${annonce['TypeSang'] ?? 'Indisponible'}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Centre de Santé: ${annonce['CentreSante'] ?? 'Indisponible'}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Description: ${annonce['description'] ?? 'Indisponible'}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Raison: ${annonce['raison'] ?? 'Indisponible'}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 32),
+                    // Action Buttons
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () => _makePhoneCall(userPhoneNumber),
-                        child: Text('Appelle'),
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          textStyle: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () => _sendMessage(userPhoneNumber),
-                        child: Text('Message'),
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          textStyle: TextStyle(fontSize: 18),
-                        ),
+                      child: Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () => _makePhoneCall(userPhoneNumber),
+                            child: Text('Appeler'),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), backgroundColor: Color.fromARGB(255, 218, 56, 27),
+                              textStyle: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => _sendMessage(userPhoneNumber),
+                            child: Text('Envoyer un Message'),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), backgroundColor: Colors.blue,
+                              textStyle: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
