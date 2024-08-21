@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                   final isProcessing = _processingAnnonceId == annonce['id'].toString();
 
                   return Card(
-                      color: Colors.red[50],
+                      color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

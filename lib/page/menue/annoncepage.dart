@@ -170,36 +170,46 @@ class _AnnoncepageState extends State<Annoncepage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 TextButton(
-                                  onPressed: () async {
+                                  onPressed: isProcessing
+                                      ? null
+                                      : () async {
+                                    setState(() {
+                                      _processingAnnonceId = annonce['id'].toString();
+                                    });
+
                                     try {
                                       await _apiService.createDon(
                                           annonce['id'], _userId!);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text(
-                                              'Demande envoyée avec succès.'),
+                                          content: Text('Demande envoyée avec succès.'),
+                                        ),
+                                      );
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Details(annonceId: annonce['id']),
                                         ),
                                       );
                                     } catch (e) {
                                       print('Erreur: $e');
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: Text(
                                               'Erreur lors de l\'envoi de la demande.'),
                                         ),
                                       );
+                                    } finally {
+                                      setState(() {
+                                        _processingAnnonceId = null;
+                                      });
                                     }
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            Details(annonceId: annonce['id']),
-                                      ),
-                                    );
                                   },
-                                  child: Text("Répondre"),
+                                  child: isProcessing
+                                      ? CircularProgressIndicator()
+                                      : Text("Répondre"),
                                 ),
                               ],
                             ),
