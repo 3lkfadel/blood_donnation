@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
-
-import 'UserDons.dart'; // Import your UserDons page
+import 'UserDons.dart';
 
 class Historique extends StatefulWidget {
   const Historique({super.key});
@@ -16,6 +15,7 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
   List<Map<String, dynamic>> _donsEffectues = [];
   bool _isLoadingDemandes = false;
   bool _isLoadingDons = false;
+  bool _isFetchingDons = false; // Pour empêcher les clics multiples
 
   @override
   void initState() {
@@ -77,6 +77,12 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
   }
 
   Future<void> _fetchDonsForAnnonce(int annonceId) async {
+    if (_isFetchingDons) return; // Empêcher les clics multiples
+
+    setState(() {
+      _isFetchingDons = true;
+    });
+
     try {
       final dons = await ApiService().getDonsForAnnonce(annonceId);
       Navigator.push(
@@ -84,12 +90,16 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
         MaterialPageRoute(
           builder: (context) => UserDons(
             dons: dons,
-            annonceId: annonceId, // Pass the annonce ID
+            annonceId: annonceId,
           ),
         ),
       );
     } catch (e) {
       print('Failed to load dons: $e');
+    } finally {
+      setState(() {
+        _isFetchingDons = false;
+      });
     }
   }
 
@@ -138,7 +148,6 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
           _isLoadingDons
               ? Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-            scrollDirection: Axis.vertical,
             child: Column(
               children: _donsEffectues.map((don) {
                 return Card(
@@ -160,31 +169,48 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
           _isLoadingDemandes
               ? Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-            scrollDirection: Axis.vertical,
             child: Column(
               children: _demandes.map((demande) {
-                return Card(
-                  margin: EdgeInsets.all(8.0),
-                  child: ListTile(
-                    leading: GestureDetector(
-                      onTap: () async {
-                        await _fetchDonsForAnnonce(demande['id']);
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.close),
-                          SizedBox(height: 4),
-                          Text(
-                            'Fermer',
-                            style: TextStyle(fontSize: 12),
+                bool isClosed = demande['etat'] == 'inactif';
+                return GestureDetector(
+                  onTap: _isFetchingDons
+                      ? null
+                      : () async {
+                    await _fetchDonsForAnnonce(demande['id']);
+                  },
+                  child: Stack(
+                    children: [
+                      Card(
+                        margin: EdgeInsets.all(8.0),
+                        elevation: 4,
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 100),
+                          curve: Curves.easeInOut,
+                          color: _isFetchingDons ? Colors.grey[50] : Colors.grey[50],
+                          child: ListTile(
+                            title: Text(demande['titre'] ?? 'Sans titre'),
+                            subtitle: Text(demande['description'] ?? 'Aucune description'),
+                            trailing: Text(demande['created_at'] ?? ''),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                    title: Text(demande['titre'] ?? 'Sans titre'),
-                    subtitle: Text(demande['description'] ?? 'Aucune description'),
-                    trailing: Text(demande['created_at'] ?? ''),
+                      if (isClosed)
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withOpacity(0.5),
+                            child: Center(
+                              child: Text(
+                                'Annonce fermée',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 );
               }).toList(),
