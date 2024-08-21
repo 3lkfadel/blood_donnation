@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
+import 'package:flutter/widgets.dart';
 
 class SettingPage extends StatelessWidget {
   final ApiService _apiService = ApiService();
@@ -146,7 +147,7 @@ class SettingPage extends StatelessWidget {
                           onTap: () {
                             Navigator.pushNamed(context, '/historique');
                           },
-                          child: _buildFeatureCard(context, ' Historique', Icons.history, Colors.lightBlue[100]),
+                          child: _buildFeatureCard(context, ' Historique', Icons.history, Colors.green[100]),
                         ),
                         InkWell(
                           onTap: () {
@@ -160,17 +161,12 @@ class SettingPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/BloodPointPage');
-                          },
-                          child: _buildFeatureCard(context, 'Blood point', Icons.bloodtype, Colors.red[100]),
-                        ),
+                       
                         InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/login');
                           },
-                          child: _buildFeatureCard(context, 'Log out', Icons.logout, Colors.green[100]),
+                          child: _buildFeatureCard(context, 'Log out', Icons.logout,Colors.red[200]),
                         ),
                       ],
                     ),
@@ -203,9 +199,15 @@ class SettingPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 10,),
-              Icon(icon, size: 40, color: Colors.black54),
+              Icon(icon, size: 40, color: Colors.white),
              const SizedBox(height: 8),
-              Text(title, textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
+              Text(
+                title,
+               selectionColor: Colors.white,
+                textAlign: TextAlign.center, 
+                style: TextStyle(fontSize: 16),
+                
+                ),
             ],
           ),
         ),
