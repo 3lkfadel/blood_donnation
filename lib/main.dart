@@ -1,8 +1,9 @@
 import 'package:blood_donnation/firebase_options.dart';
 import 'package:blood_donnation/page/ConnexionPage/LoginPage.dart';
 import 'package:blood_donnation/page/ConnexionPage/SiginUppage.dart';
-import 'package:blood_donnation/page/ConnexionPage/groupeselectionpage.dart';
-import 'package:blood_donnation/page/Learningpage/learningpage2.dart';
+import 'package:blood_donnation/page/ConnexionPage/GroupeSelectionpage.dart';
+import 'package:blood_donnation/page/Learningpage/LearningPage2.dart';
+import 'package:blood_donnation/page/animation/PageView.dart';
 import 'package:blood_donnation/page/learningpage/LearningPage1.dart';
 import 'package:blood_donnation/page/learningpage/learningpage3.dart';
 import 'package:blood_donnation/page/map/map.dart';
@@ -11,11 +12,11 @@ import 'package:blood_donnation/page/menue/HomePage.dart';
 import 'package:blood_donnation/page/menue/NotificationPage.dart';
 import 'package:blood_donnation/page/menue/ProfilePage.dart';
 import 'package:blood_donnation/page/menue/UserDons.dart';
-import 'package:blood_donnation/page/menue/annoncepage.dart';
-import 'package:blood_donnation/page/menue/demandePage.dart';
-import 'package:blood_donnation/page/menue/details.dart';
-import 'package:blood_donnation/page/menue/historique.dart';
-import 'package:blood_donnation/page/menue/settingpage.dart';
+import 'package:blood_donnation/page/menue/AnnoncePage.dart';
+import 'package:blood_donnation/page/menue/DemandePage.dart';
+import 'package:blood_donnation/page/menue/Details.dart';
+import 'package:blood_donnation/page/menue/Historique.dart';
+import 'package:blood_donnation/page/menue/SettingPage.dart';
 import 'package:blood_donnation/page/restePassword/ResetPage1.dart';
 import 'package:blood_donnation/page/restePassword/resetPage2.dart';
 import 'package:blood_donnation/page/restePassword/resetPassword3.dart';
@@ -72,7 +73,7 @@ class MyApp extends StatelessWidget {
 
       },
       debugShowCheckedModeBanner: false,
-      home: Learningpage1(),
+      home: OnboardingScreen(),
     );
   }
 }

@@ -56,7 +56,7 @@ class Learningpage3 extends StatelessWidget {
                       foregroundColor: Colors.white, backgroundColor: Color.fromARGB(255, 218, 56, 27), 
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
-                    child: Text("Next"),
+                    child: Text("Let's Go"),
                   ),
                 ),
               ],

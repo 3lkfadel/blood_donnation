@@ -47,19 +47,7 @@ class Learningpage1 extends StatelessWidget {
                   textAlign: TextAlign.justify, // Justifier le texte pour une répartition uniforme
                 ),
                 SizedBox(height: 20), // Espace entre le texte et le bouton
-                Align(
-                  alignment: Alignment.center, // Centrer le bouton
-                  child: ElevatedButton(
-                    onPressed: (){
-                      Navigator.pushNamed(context, '/leraningpage2');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Color.fromARGB(255, 218, 56, 27), // Couleur du texte du bouton
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                    child: Text("Next"),
-                  ),
-                ),
+                
               ],
             ),
           ],

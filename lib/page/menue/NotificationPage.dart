@@ -1,7 +1,7 @@
 import 'package:blood_donnation/config/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
-import 'details.dart';
+import 'Details.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);

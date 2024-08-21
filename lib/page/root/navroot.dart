@@ -1,7 +1,7 @@
 import 'package:blood_donnation/page/menue/FeedPage.dart';
 import 'package:blood_donnation/page/menue/HomePage.dart';
-import 'package:blood_donnation/page/menue/annoncepage.dart';
-import 'package:blood_donnation/page/menue/settingpage.dart';
+import 'package:blood_donnation/page/menue/AnnoncePage.dart';
+import 'package:blood_donnation/page/menue/SettingPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
