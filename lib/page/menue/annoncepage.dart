@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
-
 import 'details.dart';
 
 class Annoncepage extends StatefulWidget {
@@ -14,6 +13,7 @@ class _AnnoncepageState extends State<Annoncepage> {
   final ApiService _apiService = ApiService();
   List<Map<String, dynamic>> _announcements = [];
   String? _userId;
+  String? _processingAnnonceId; // Variable pour stocker l'ID de l'annonce en cours de traitement
 
   @override
   void initState() {
@@ -25,13 +25,11 @@ class _AnnoncepageState extends State<Annoncepage> {
   Future<void> _fetchAnnouncements() async {
     try {
       final announcements = await _apiService.getAnnouncements();
-      print('Fetched announcements: $announcements'); // Ajoutez ceci pour déboguer
       setState(() {
         _announcements = announcements;
       });
     } catch (e) {
       print('Failed to load announcements: $e');
-      // Vous pouvez afficher un message d'erreur ici
     }
   }
 
@@ -39,13 +37,12 @@ class _AnnoncepageState extends State<Annoncepage> {
     try {
       final profileData = await _apiService.getProfiles();
       setState(() {
-        _userId = profileData['id'].toString(); // Stocke l'ID de l'utilisateur connecté
+        _userId = profileData['id'].toString();
       });
     } catch (e) {
       print('Erreur lors de la récupération du profil : $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +74,6 @@ class _AnnoncepageState extends State<Annoncepage> {
               ),
             ),
           ],
-          
         ),
         actions: [
           IconButton(
@@ -87,7 +83,7 @@ class _AnnoncepageState extends State<Annoncepage> {
             icon: Icon(Icons.notifications, color: Colors.black),
           ),
         ],
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
       ),
       body: ListView(
         children: [
@@ -95,8 +91,6 @@ class _AnnoncepageState extends State<Annoncepage> {
             padding: const EdgeInsets.all(16.0),
             child: Wrap(
               alignment: WrapAlignment.spaceEvenly,
-
-              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton.icon(
                   onPressed: () {
@@ -104,8 +98,9 @@ class _AnnoncepageState extends State<Annoncepage> {
                   },
                   icon: Icon(Icons.bloodtype),
                   label: Text('Besoin de sang'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red,
-                      padding: EdgeInsets.all(19)
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.all(19),
                   ),
                 ),
                 ElevatedButton.icon(
@@ -114,22 +109,25 @@ class _AnnoncepageState extends State<Annoncepage> {
                   },
                   icon: Icon(Icons.favorite),
                   label: Text('Centre de don'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey,
-                  padding: EdgeInsets.all(19)
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                    padding: EdgeInsets.all(19),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           _announcements.isEmpty
               ? Center(child: CircularProgressIndicator())
               : ListView.builder(
-            shrinkWrap: true, // Permet de redimensionner la hauteur du ListView
-            physics: NeverScrollableScrollPhysics(), // Empêche le défilement du ListView interne
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: _announcements.length,
             itemBuilder: (context, index) {
               final annonce = _announcements[index];
+              final isProcessing = _processingAnnonceId == annonce['id'].toString();
+
               return Card(
                 color: Colors.red[50],
                 shape: RoundedRectangleBorder(
@@ -138,40 +136,57 @@ class _AnnoncepageState extends State<Annoncepage> {
                 child: ListTile(
                   leading: Text(
                     annonce['TypeSang'] ?? 'N/A',
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   title: Text(annonce['titre'] ?? 'Sans titre'),
                   subtitle: Text(annonce['description'] ?? 'Aucune description'),
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextButton(
-                              onPressed: () async {
-                                try {
-                                  await _apiService.createDon(annonce['id'], _userId!);
-                                  // Afficher un message de succès ou naviguer vers une autre page
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text('Demande envoyée avec succès.'),
-                                  ));
-                                } catch (e) {
-                                  // Gérer l'erreur (afficher un message, etc.)
-                                  print('Erreur: $e');
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text('Erreur lors de l\'envoi de la demande.'),
-                                  ));
-                                }
-                              Navigator.push(
+                      TextButton(
+                        onPressed: isProcessing
+                            ? null
+                            : () async {
+                          setState(() {
+                            _processingAnnonceId = annonce['id'].toString();
+                          });
+
+                          try {
+                            await _apiService.createDon(
+                                annonce['id'], _userId!);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Demande envoyée avec succès.'),
+                              ),
+                            );
+
+                            Navigator.push(
                               context,
-                               MaterialPageRoute(
-                               builder: (context) => Details(annonceId: annonce['id']),
-                                 ),
-                              );
-                             },
-                              child: Text("Répondre")),
-                        ],
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    Details(annonceId: annonce['id']),
+                              ),
+                            );
+                          } catch (e) {
+                            print('Erreur: $e');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Erreur lors de l\'envoi de la demande.'),
+                              ),
+                            );
+                          } finally {
+                            setState(() {
+                              _processingAnnonceId = null;
+                            });
+                          }
+                        },
+                        child: isProcessing
+                            ? CircularProgressIndicator()
+                            : Text("Répondre"),
                       ),
                     ],
                   ),
@@ -183,5 +198,4 @@ class _AnnoncepageState extends State<Annoncepage> {
       ),
     );
   }
-
 }

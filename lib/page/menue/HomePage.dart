@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
     "assets/learningpage/image3.png",
   ];
   String? _userId;
+  String? _processingAnnonceId;
 
   @override
   void initState() {
@@ -144,16 +145,17 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 25,
                 ),
               ),
-              SizedBox(height: 15),
               _announcements.isEmpty
-              ? Center(child: CircularProgressIndicator())
-               : ListView.builder(
-                shrinkWrap: true, // Permet de redimensionner la hauteur du ListView
-                 physics: NeverScrollableScrollPhysics(), // Empêche le défilement du ListView interne
-                 itemCount: _announcements.length,
-                  itemBuilder: (context, index) {
-                    final annonce = _announcements[index];
-                    return Card(
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: _announcements.length,
+                itemBuilder: (context, index) {
+                  final annonce = _announcements[index];
+                  final isProcessing = _processingAnnonceId == annonce['id'].toString();
+
+                  return Card(
                       color: Colors.red[50],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -174,28 +176,47 @@ class _HomePageState extends State<HomePage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 TextButton(
-                                    onPressed: () async {
-                                      try {
-                                        await _apiService.createDon(annonce['id'], _userId!);
-                                        // Afficher un message de succès ou naviguer vers une autre page
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  onPressed: isProcessing
+                                      ? null
+                                      : () async {
+                                    setState(() {
+                                      _processingAnnonceId = annonce['id'].toString();
+                                    });
+
+                                    try {
+                                      await _apiService.createDon(
+                                          annonce['id'], _userId!);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
                                           content: Text('Demande envoyée avec succès.'),
-                                        ));
-                                      } catch (e) {
-                                        // Gérer l'erreur (afficher un message, etc.)
-                                        print('Erreur: $e');
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          content: Text('Erreur lors de l\'envoi de la demande.'),
-                                        ));
-                                      }
+                                        ),
+                                      );
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => Details(annonceId: annonce['id']),
+                                          builder: (context) =>
+                                              Details(annonceId: annonce['id']),
                                         ),
                                       );
-                                    },
-                                    child: Text("Répondre")),
+                                    } catch (e) {
+                                      print('Erreur: $e');
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Erreur lors de l\'envoi de la demande.'),
+                                        ),
+                                      );
+                                    } finally {
+                                      setState(() {
+                                        _processingAnnonceId = null;
+                                      });
+                                    }
+                                  },
+                                  child: isProcessing
+                                      ? CircularProgressIndicator()
+                                      : Text("Répondre"),
+                                ),
                               ],
                             ),
                           ],
