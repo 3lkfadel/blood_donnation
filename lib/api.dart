@@ -1,3 +1,4 @@
+import 'package:blood_donnation/page/Pub/Pub.dart';
 import 'package:blood_donnation/page/map/centreSante.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -426,5 +427,24 @@ class ApiService {
       rethrow;
     }
   }
+
+  //recuperer les publicités
+  Future<List<Pub>> getPublicites() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.pub);
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        return data.map((json) => Pub.fromJson(json)).toList();
+      } else {
+        throw Exception(
+            'Failed to fetch ads: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching ads: $e');
+      rethrow;
+    }
+  }
+
+
 
 }

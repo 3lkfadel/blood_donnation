@@ -37,10 +37,8 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
       });
     } catch (e) {
       print('Failed to load health centers: $e');
-      // Gérer l'erreur ou afficher un message
     }
   }
-
 
   Future<void> _loadUserProfile() async {
     try {
@@ -55,7 +53,6 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
       });
     } catch (e) {
       print('Failed to load user profile: $e');
-      // Gérer l'erreur ou afficher un message
     }
   }
 
@@ -63,7 +60,6 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        // Assurez-vous d'envoyer toutes les données nécessaires ici
         final response = await _apiService.postAnnouncement(
           _title!,
           _description!,
@@ -75,7 +71,6 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Annonce publiée avec succès")),
           );
-          // redirer vers l'accueil
           Navigator.pushReplacementNamed(context, '/nav');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -203,38 +198,40 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
                   return null;
                 },
               ),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                    labelText: 'Centre de santé',
-                ),
-                value: _selectedHealthCenter,
-                items: _healthCenters.map((center) {
-                  return DropdownMenuItem<String>(
-                    value: center['nom'].toString(),
-                    child:
-                        Wrap(
-                          children: [
-                            Text(
-                              center['nom'],
-                              softWrap: true,
-                                ),
-                          ],
-                        ),
-
-
-
-                  );
-                }).toList(),
-                onChanged: (value) {
+              SizedBox(height: 16),
+              Autocomplete<String>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text.isEmpty) {
+                    return const Iterable<String>.empty();
+                  }
+                  return _healthCenters
+                      .map((center) => center['nom'].toString())
+                      .where((nom) => nom.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+                },
+                onSelected: (String selection) {
                   setState(() {
-                    _selectedHealthCenter = value;
+                    _selectedHealthCenter = selection;
                   });
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez sélectionner un centre de santé';
-                  }
-                  return null;
+                fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                  return TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      labelText: 'Centre de santé',
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedHealthCenter = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez sélectionner ou entrer un centre de santé';
+                      }
+                      return null;
+                    },
+                  );
                 },
               ),
               SizedBox(height: 16),

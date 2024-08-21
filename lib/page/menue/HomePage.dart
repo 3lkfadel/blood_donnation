@@ -1,7 +1,10 @@
+import 'package:blood_donnation/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:blood_donnation/api.dart';
+import 'package:blood_donnation/page/Pub/Pub.dart';
 
+import '../Pub/PublicitesDetailsPage.dart';
 import 'details.dart';
 
 
@@ -15,11 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final ApiService _apiService = ApiService();
   List<Map<String, dynamic>> _announcements = [];
-  final List<String> imgList = [
-    "assets/learningpage/image3.png",
-    "assets/learningpage/image2.png",
-    "assets/learningpage/image3.png",
-  ];
+  List<Pub> _publicites = [];
   String? _userId;
   String? _processingAnnonceId;
 
@@ -28,6 +27,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _fetchAnnouncements();
     _fetchUserProfile();
+    _fetchPublicites();
   }
 
   Future<void> _fetchAnnouncements() async {
@@ -53,6 +53,20 @@ class _HomePageState extends State<HomePage> {
       print('Erreur lors de la récupération du profil : $e');
     }
   }
+
+  // obtenir les publicites
+  Future<void> _fetchPublicites() async {
+    try {
+      final publicites = await _apiService.getPublicites();
+      print('Fetched publicites: $publicites');
+      setState(() {
+        _publicites = publicites;
+      });
+    } catch (e) {
+      print('Failed to load publicites: $e');
+    }
+  }
+
 
   bool _hasNewNotifications = true;
 
@@ -112,20 +126,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 200.0,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  aspectRatio: 16 / 9,
-                  viewportFraction: 0.8,
-                ),
-                items: imgList.map((item) => Container(
-                  child: Center(
-                    child: Image.asset(item, fit: BoxFit.cover, width: 1000),
-                  ),
-                )).toList(),
-              ),
+              _buildCarousel(),
               SizedBox(height: 30),
               Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -271,4 +272,48 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  Widget _buildCarousel() {
+    if (_publicites.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
+    const String baseUrl= ApiEndpoints.imageurl;
+
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 200.0,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        aspectRatio: 16 / 9,
+        viewportFraction: 0.8,
+      ),
+      items: _publicites.map((publicite) {
+        final imageUrl = '$baseUrl${publicite.image}';
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PubliciteDetailsPage(
+              publicite: publicite,
+              ),
+            ),
+            );
+
+          },
+          child: Container(
+            child: Center(
+              child: Image.network(
+                imageUrl, // URL of the ad image
+                fit: BoxFit.cover,
+                width: 1000,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+
+  }
 }
+
