@@ -237,8 +237,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildClickableElement(IconData icon, String text, String routeName) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10.0),
-      padding: EdgeInsets.all(6.0),
+      margin: EdgeInsets.symmetric(horizontal: 7.0),
+      padding: EdgeInsets.all(3.0),
       decoration: BoxDecoration(
         color: Color.fromARGB(121, 239, 19, 19),
         borderRadius: BorderRadius.circular(25.0),
