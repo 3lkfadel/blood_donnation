@@ -51,6 +51,7 @@ class _AnnoncepageState extends State<Annoncepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -102,9 +103,16 @@ class _AnnoncepageState extends State<Annoncepage> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/demande');
                   },
-                  icon: Icon(Icons.bloodtype),
-                  label: Text('Besoin de sang'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red,
+                  icon: Icon(Icons.bloodtype,
+                  color: Colors.white,),
+                  label: Text('Besoin de sang',
+                  style: TextStyle(
+                    color: Colors.white,
+                    
+                  ),
+                  selectionColor: Colors.black,),
+                  
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red[200],
                       padding: EdgeInsets.all(19)
                   ),
                 ),
@@ -112,9 +120,14 @@ class _AnnoncepageState extends State<Annoncepage> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/map');
                   },
-                  icon: Icon(Icons.favorite),
-                  label: Text('Centre de don'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey,
+                  icon: Icon(Icons.favorite,
+                  color: Colors.white,
+                  ),
+                  label: Text('Centre de don',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue[200],
                   padding: EdgeInsets.all(19)
                   ),
                 ),
@@ -131,56 +144,62 @@ class _AnnoncepageState extends State<Annoncepage> {
             itemBuilder: (context, index) {
               final annonce = _announcements[index];
               return Card(
-                color: Colors.red[50],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListTile(
-                  leading: Text(
-                    annonce['TypeSang'] ?? 'N/A',
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+  color: Colors.grey[50],
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+  ),
+  elevation: 4, // Ajoute une élévation qui crée une ombre
+  shadowColor: Colors.black.withOpacity(0.25), // Optionnel: modifie la couleur de l'ombre
+  child: ListTile(
+    leading: Text(
+      annonce['TypeSang'] ?? 'N/A',
+      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+    ),
+    title: Text(annonce['titre'] ?? 'Sans titre'),
+    subtitle: Text(annonce['description'] ?? 'Aucune description'),
+    trailing: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton(
+              onPressed: () async {
+                try {
+                  await _apiService.createDon(annonce['id'], _userId!);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Demande envoyée avec succès.'),
+                    ),
+                  );
+                } catch (e) {
+                  print('Erreur: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erreur lors de l\'envoi de la demande.'),
+                    ),
+                  );
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Details(annonceId: annonce['id']),
                   ),
-                  title: Text(annonce['titre'] ?? 'Sans titre'),
-                  subtitle: Text(annonce['description'] ?? 'Aucune description'),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextButton(
-                              onPressed: () async {
-                                try {
-                                  await _apiService.createDon(annonce['id'], _userId!);
-                                  // Afficher un message de succès ou naviguer vers une autre page
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text('Demande envoyée avec succès.'),
-                                  ));
-                                } catch (e) {
-                                  // Gérer l'erreur (afficher un message, etc.)
-                                  print('Erreur: $e');
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text('Erreur lors de l\'envoi de la demande.'),
-                                  ));
-                                }
-                              Navigator.push(
-                              context,
-                               MaterialPageRoute(
-                               builder: (context) => Details(annonceId: annonce['id']),
-                                 ),
-                              );
-                             },
-                              child: Text("Répondre")),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                );
+              },
+              child: Text("Répondre"),
+            ),
+            ],
+            ),
+              ],
+               ),
+              ),
               );
             },
           ),
         ],
       ),
+      backgroundColor: Colors.white,
     );
   }
 
