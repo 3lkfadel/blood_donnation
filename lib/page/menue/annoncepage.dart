@@ -147,6 +147,7 @@ class _AnnoncepageState extends State<Annoncepage> {
                         _processingAnnonceId == annonce['id'].toString();
 
                     return Card(
+                      margin:  EdgeInsets.symmetric(vertical: 8.0),
                       color: Colors.grey[50],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

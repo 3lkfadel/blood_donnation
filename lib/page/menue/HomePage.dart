@@ -127,16 +127,15 @@ class _HomePageState extends State<HomePage> {
                 )).toList(),
               ),
               SizedBox(height: 30),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _buildClickableElement(Icons.person, "Voir Mon Profil", '/ProfilePage'),
-                    _buildClickableElement(Icons.add_circle_outline, "Publier Annonce", '/demande'),
-                    _buildClickableElement(Icons.visibility, "Voir Annonce", '/annonce'),
-                  ],
-                ),
-              ),
+              Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildClickableElement(Icons.person, "Voir Mon Profil", '/ProfilePage'),
+                      _buildClickableElement(Icons.add_circle_outline, "Publier Annonce", '/demande'),
+                      _buildClickableElement(Icons.visibility, "Voir Annonce", '/annonce'),
+                    ],
+                  ),
+                 
               SizedBox(height: 15),
               Text(
                 "ANNONCE",
@@ -156,10 +155,13 @@ class _HomePageState extends State<HomePage> {
                   final isProcessing = _processingAnnonceId == annonce['id'].toString();
 
                   return Card(
+                    margin:  EdgeInsets.symmetric(vertical: 8.0),
                       color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      elevation: 6,
+                      shadowColor: Colors.black,
                       child: ListTile(
                         leading: Text(
                           annonce['TypeSang'] ?? 'N/A',
