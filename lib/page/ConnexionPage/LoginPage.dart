@@ -157,6 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                          backgroundColor: Colors.red,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(35),
                           ),
@@ -166,12 +167,16 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Je suis nouveau"),
+                         Text("Je suis nouveau"
+                        ),
                         TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/siginup');
                           },
-                          child: const Text("Créer un compte"),
+                          child:  Text("Créer un compte",
+                        style: TextStyle(
+                          color: Colors.lightBlue[200],
+                        ),),
                         ),
                       ],
                     ),
@@ -183,7 +188,10 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             Navigator.pushNamed(context, '/reset');
                           },
-                          child: const Text("Mot de passe oublié"),
+                          child:  Text("Mot de passe oublié",
+                        style: TextStyle(
+                          color: Colors.lightBlue[200],
+                        ),),
                         ),
                       ],
                     ),

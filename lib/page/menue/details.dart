@@ -86,7 +86,7 @@ class _DetailsState extends State<Details> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // User Photo and Name
-                    Row(
+                    Wrap(
                       children: [
                         CircleAvatar(
                           radius: 50,
@@ -184,29 +184,31 @@ class _DetailsState extends State<Details> {
                     ),
                     SizedBox(height: 32),
                     // Action Buttons
-                    Center(
-                      child: Column(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => _makePhoneCall(userPhoneNumber),
-                            child: Text('Appeler'),
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), backgroundColor: Color.fromARGB(255, 218, 56, 27),
-                              textStyle: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => _sendMessage(userPhoneNumber),
-                            child: Text('Envoyer un Message'),
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), backgroundColor: Colors.blue,
-                              textStyle: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ],
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _makePhoneCall(userPhoneNumber),
+                      child: Text('Appeler'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        backgroundColor: Color.fromARGB(255, 218, 56, 27),
+                        textStyle: TextStyle(fontSize: 18),
                       ),
                     ),
+                    SizedBox(width: 16), // Espace entre les deux boutons
+                    ElevatedButton(
+                      onPressed: () => _sendMessage(userPhoneNumber),
+                      child: Text('Message'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        backgroundColor: Colors.blue,
+                        textStyle: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ],
+                ),
+
                   ],
                 ),
               ),

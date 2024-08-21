@@ -222,9 +222,13 @@ class _SiginuppageState extends State<Siginuppage> {
                     else
                       ElevatedButton(
                         onPressed: _register,
-                        child: const Text("Register"),
+                        child:  Text("Register",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                          backgroundColor: Colors.red,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(35),
                           ),
@@ -239,7 +243,10 @@ class _SiginuppageState extends State<Siginuppage> {
                           onPressed: () {
                             Navigator.pushNamed(context, '/login');
                           },
-                          child: const Text("Se connecter"),
+                          child:  Text("Se connecter",
+                        style: TextStyle(
+                          color: Colors.lightBlue[200],
+                        ),),
                         ),
                       ],
                     ),
