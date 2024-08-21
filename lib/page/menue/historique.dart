@@ -202,7 +202,7 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
                               child: Text(
                                 'Annonce fermée',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
