@@ -93,24 +93,26 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
         title: Text('Publier une annonce de demande de sang'),
         backgroundColor: Color(0xFFF9888E),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              _buildUserInfoContainer(),
-              SizedBox(height: 16),
-              _buildFormContainer(),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Soumettre'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.red,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                _buildUserInfoContainer(),
+                SizedBox(height: 16),
+                _buildFormContainer(),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text('Soumettre'),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Colors.red,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -120,7 +122,6 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
   Widget _buildUserInfoContainer() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.lightBlue[200],
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Color(0xFFF9888E)),
       ),
