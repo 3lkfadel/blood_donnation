@@ -48,10 +48,10 @@ class _LoginPageState extends State<LoginPage> {
         if (e.response != null && e.response?.data != null) {
           errorMessage = e.response?.data['message'] ?? 'Échec de la connexion.';
         } else {
-          errorMessage = 'Erreur réseau. Veuillez réessayer.';
+          errorMessage = 'Echec de la connexion.';
         }
       } else {
-        errorMessage = 'Une erreur inattendue s\'est produite.';
+        errorMessage = 'Mot de passe ou email incorrect.';
       }
       setState(() {
         _errorMessage = errorMessage;

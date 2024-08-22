@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:blood_donnation/api.dart';
 
 class Resetpage extends StatefulWidget {
   const Resetpage({super.key});
@@ -9,11 +11,43 @@ class Resetpage extends StatefulWidget {
 
 class _ResetpageState extends State<Resetpage> {
   final TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword() async {
+    String email = _emailController.text;
+
+    if (email.isEmpty || !EmailValidator.validate(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Veuillez entrer un email valide.')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await ApiService().sendResetPasswordLink(email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email de réinitialisation envoyé.')),
+      );
+      Navigator.pushNamed(context, '/reset2');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -39,17 +73,18 @@ class _ResetpageState extends State<Resetpage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Reset password",
+                "Réinitialiser le mot de passe",
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 15),
-              Text("Texte explicatif de se qui l’utilisateur doit faire"),
+              Text("Veuillez entrer votre email pour recevoir un lien de réinitialisation."),
               SizedBox(height: 15),
               TextField(
                 controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'E-mail',
                   border: OutlineInputBorder(
@@ -58,11 +93,11 @@ class _ResetpageState extends State<Resetpage> {
                 ),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/reset2');
-                },
-                child: Text("next"),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(
+                onPressed: _resetPassword,
+                child: Text("Suivant"),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(

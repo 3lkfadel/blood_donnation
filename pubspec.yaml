@@ -46,6 +46,7 @@ dependencies:
   url_launcher: ^6.1.7
   google_maps_flutter: ^2.9.0
   permission_handler: ^11.3.1
+  email_validator: ^3.0.0
 
 dev_dependencies:
   flutter_test:

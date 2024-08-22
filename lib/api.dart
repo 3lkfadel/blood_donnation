@@ -83,7 +83,7 @@ class ApiService {
       }
     } on DioException catch (e) {
       if (e.response != null) {
-        print('Erreur réseau: ${e.response?.data}');
+        print('Echec de la connexion: ${e.response?.data}');
         throw Exception('Erreur réseau: ${e.response?.data}');
       } else {
         print('Erreur réseau sans réponse');
@@ -462,6 +462,45 @@ class ApiService {
     }
   }
 
+  //envoi du lien de renitialisation du mot de passe
+  Future<void> sendResetPasswordLink(String email) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.passwordlink, data: {
+        'email': email,
+      });
+      if (response.statusCode == 200) {
+        print('Email de réinitialisation du mot de passe envoyé avec succès');
+      } else {
+        throw Exception(
+            'Échec de l\'envoi du lien de réinitialisation du mot de passe: ${response
+                .data['message']}');
+      }
+    } catch (e) {
+      print(
+          'Erreur lors de l\'envoi du lien de réinitialisation du mot de passe: $e');
+      rethrow;
+    }
 
+    //renitialiser le mot de passe
+    Future<void> resetPassword(String code, String email, String password) async {
+      try {
+        final response = await _dio.post(ApiEndpoints.passwordreset, data: {
+          'code': code,
+          'password': password,
+          'email': email,
+        });
+        if (response.statusCode == 200) {
+          print('Mot de passe réinitialisé avec succès');
+        } else {
+          throw Exception(
+              'Échec de la réinitialisation du mot de passe: ${response
+                  .data['message']}');
+        }
+      } catch (e) {
+        print('Erreur lors de la réinitialisation du mot de passe: $e');
+        rethrow;
+      }
+    }
+  }
 
 }
