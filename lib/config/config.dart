@@ -14,6 +14,7 @@ class ApiEndpoints {
   static const String centre = '$baseUrl/centres';
   static const String imageurl = 'http://192.168.11.105:8000/storage/';
   static const String don = '$baseUrl/dons';
+
   static String donsForAnnonce(int annonceId) {
     return '$baseUrl/annonce/$annonceId/dons';
   }
@@ -24,6 +25,9 @@ class ApiEndpoints {
   static String myDon="$baseUrl/myDon";
   static String donConfirmation(int donId) {
     return '$baseUrl/confirmDon/$donId';
+  }
+  static String donAnnulation(int donId) {
+    return '$baseUrl/annulerDon/$donId';
   }
 
   static String pub = "$baseUrl/pub";

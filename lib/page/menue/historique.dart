@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
-import 'UserDons.dart'; // Import your UserDons page
+import 'UserDons.dart';
 
 class Historique extends StatefulWidget {
   const Historique({super.key});
@@ -21,7 +21,7 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
-    _fetchUserDons(); // Charger les dons par défaut
+    _fetchUserDons();
   }
 
   void _handleTabSelection() {
@@ -83,7 +83,7 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
         MaterialPageRoute(
           builder: (context) => UserDons(
             dons: dons,
-            annonceId: annonceId, // Pass the annonce ID
+            annonceId: annonceId,
           ),
         ),
       );
@@ -160,17 +160,44 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
               : SingleChildScrollView(
             child: Column(
               children: _demandes.map((demande) {
+                final isInactive = demande['etat'] == 'inactif';
                 return GestureDetector(
-                  onTap: () async {
+                  onTap: isInactive
+                      ? null
+                      : () async {
                     await _fetchDonsForAnnonce(demande['id']);
                   },
-                  child: Card(
-                    margin: EdgeInsets.all(8.0),
-                    child: ListTile(
-                      title: Text(demande['titre'] ?? 'Sans titre'),
-                      subtitle: Text(demande['description'] ?? 'Aucune description'),
-                      trailing: Text(demande['created_at'] ?? ''),
-                    ),
+                  child: Stack(
+                    children: [
+                      Card(
+                        margin: EdgeInsets.all(8.0),
+                        child: ListTile(
+                          title: Text(demande['titre'] ?? 'Sans titre'),
+                          subtitle: Text(demande['description'] ?? 'Aucune description'),
+                          trailing: Text(demande['created_at'] ?? ''),
+                        ),
+                      ),
+                      if (isInactive)
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Annonce fermée',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 );
               }).toList(),

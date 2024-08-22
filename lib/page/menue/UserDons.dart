@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
 
+import 'Historique.dart';
+
 class UserDons extends StatefulWidget {
   final List<Map<String, dynamic>> dons;
   final int annonceId;
@@ -13,8 +15,8 @@ class UserDons extends StatefulWidget {
 
 class _UserDonsState extends State<UserDons> {
   List<Map<String, dynamic>> _dons = [];
-  bool _isLoading = true; // Indicateur de chargement global
-  bool _isConfirming = false; // Indicateur de chargement lors de la confirmation d'un don
+  bool _isLoading = true;
+  Map<int, bool> _isProcessing = {};
 
   @override
   void initState() {
@@ -26,7 +28,6 @@ class _UserDonsState extends State<UserDons> {
     setState(() {
       _isLoading = true;
     });
-    // Simuler le temps de chargement des dons (si besoin)
     await Future.delayed(Duration(seconds: 1));
     setState(() {
       _dons = widget.dons;
@@ -63,14 +64,19 @@ class _UserDonsState extends State<UserDons> {
     try {
       await ApiService().desactiverAnnonce(widget.annonceId);
       print("Annonce fermée !");
+      // Redirection vers la page historique après la fermeture
+      Navigator.pop(context);
     } catch (e) {
       print("Erreur lors de la fermeture de l'annonce : $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la fermeture de l\'annonce.')),
+      );
     }
   }
 
   Future<void> _confirmDon(int donId) async {
     setState(() {
-      _isConfirming = true;
+      _isProcessing[donId] = true;
     });
     try {
       await ApiService().confirmDon(donId);
@@ -82,7 +88,6 @@ class _UserDonsState extends State<UserDons> {
           return don;
         }).toList();
       });
-      // Afficher un Snackbar pour informer que le don a été confirmé
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Le don a été confirmé avec succès.')),
       );
@@ -93,7 +98,36 @@ class _UserDonsState extends State<UserDons> {
       );
     } finally {
       setState(() {
-        _isConfirming = false;
+        _isProcessing[donId] = false;
+      });
+    }
+  }
+
+  Future<void> _cancelConfirmation(int donId) async {
+    setState(() {
+      _isProcessing[donId] = true;
+    });
+    try {
+      await ApiService().cancelDon(donId);
+      setState(() {
+        _dons = _dons.map((don) {
+          if (don['id'] == donId) {
+            don['etat'] = 'annulé';
+          }
+          return don;
+        }).toList();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Le don a été annulé avec succès.')),
+      );
+    } catch (e) {
+      print("Erreur lors de l'annulation du don : $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de l\'annulation du don.')),
+      );
+    } finally {
+      setState(() {
+        _isProcessing[donId] = false;
       });
     }
   }
@@ -105,7 +139,7 @@ class _UserDonsState extends State<UserDons> {
         title: Text('Dons associés'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator()) // Affichage du chargement initial
+          ? Center(child: CircularProgressIndicator())
           : Column(
         children: [
           Expanded(
@@ -114,7 +148,7 @@ class _UserDonsState extends State<UserDons> {
                 final isConfirmed = don['etat'] == 'confirmé';
                 return Card(
                   margin: EdgeInsets.all(8.0),
-                  color: isConfirmed ? Colors.grey[300] : null, // Griser l'élément si confirmé
+                  color: isConfirmed ? Colors.grey[300] : null,
                   child: ListTile(
                     title: Text('Donateur: ${don['user']['name']}'),
                     subtitle: Column(
@@ -128,21 +162,25 @@ class _UserDonsState extends State<UserDons> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: _isConfirming && !isConfirmed
+                          icon: _isProcessing[don['id']] == true
                               ? CircularProgressIndicator(strokeWidth: 2)
-                              : Icon(Icons.check),
-                          onPressed: isConfirmed || _isConfirming
+                              : Icon(
+                            Icons.check,
+                            color: isConfirmed ? Colors.grey : Colors.green,
+                          ),
+                          onPressed: isConfirmed || _isProcessing[don['id']] == true
                               ? null
                               : () async {
                             await _confirmDon(don['id']);
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.cancel),
-                          onPressed: isConfirmed ? null : () {
-                            // Annuler le don
-                            // Appeler votre API pour annuler le don
-                          },
+                          icon: Icon(Icons.cancel, color: isConfirmed ? Colors.red : Colors.grey),
+                          onPressed: isConfirmed && _isProcessing[don['id']] != true
+                              ? () async {
+                            await _cancelConfirmation(don['id']);
+                          }
+                              : null,
                         ),
                       ],
                     ),
@@ -158,7 +196,10 @@ class _UserDonsState extends State<UserDons> {
                 _showConfirmationDialog(context, _closeAnnonce);
               },
               icon: Icon(Icons.close),
-              label: Text('Fermer l\'annonce'),
+              label: Text('Fermer l\'annonce', style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
                 backgroundColor: Colors.red,

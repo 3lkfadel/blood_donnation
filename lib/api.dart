@@ -411,6 +411,23 @@ class ApiService {
     }
   }
 
+  //annuler don
+  Future<void> cancelDon(int donId) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.donAnnulation(donId));
+      if (response.statusCode == 200) {
+        print('Don annulé avec succès');
+      } else {
+        throw Exception(
+            'Erreur lors de l\'annulation du don: ${response.data['message']}');
+      }
+    } catch (e) {
+      print('Erreur lors de l\'annulation du don: $e');
+      rethrow;
+    }
+  }
+
+
   //obtenir les centre de santé sous forme de list
   Future<List<HealthCenter>> fetchHealthCenters() async {
     try {
