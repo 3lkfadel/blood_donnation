@@ -91,184 +91,170 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Publier une annonce de demande de sang'),
+        backgroundColor: Color(0xFFF9888E),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: <Widget>[
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nom'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre nom';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(labelText: 'Numéro'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre numéro de téléphone';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _ageController,
-                decoration: InputDecoration(labelText: 'Âge'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre âge';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre email';
-                  }
-                  return null;
-                },
-              ),
+              _buildUserInfoContainer(),
               SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: selectedGender,
-                decoration: InputDecoration(labelText: 'Sexe'),
-                items: ['Homme', 'Femme', 'Autre']
-                    .map((gender) => DropdownMenuItem(
-                  value: gender,
-                  child: Text(gender),
-                ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedGender = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez sélectionner le sexe';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _cityController,
-                decoration: InputDecoration(labelText: 'Ville'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre ville';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Titre de l\'annonce'),
-                onSaved: (value) {
-                  _title = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer le titre de l\'annonce';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Description'),
-                maxLines: 3,
-                onSaved: (value) {
-                  _description = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer la description';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text.isEmpty) {
-                    return const Iterable<String>.empty();
-                  }
-                  return _healthCenters
-                      .map((center) => center['nom'].toString())
-                      .where((nom) => nom.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-                },
-                onSelected: (String selection) {
-                  setState(() {
-                    _selectedHealthCenter = selection;
-                  });
-                },
-                fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                  return TextFormField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      labelText: 'Centre de santé',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedHealthCenter = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez sélectionner ou entrer un centre de santé';
-                      }
-                      return null;
-                    },
-                  );
-                },
-              ),
-              SizedBox(height: 16),
-              Text('Type de sang'),
-              Wrap(
-                spacing: 8.0,
-                children: <Widget>[
-                  _buildBloodTypeChip('A+'),
-                  _buildBloodTypeChip('A-'),
-                  _buildBloodTypeChip('B+'),
-                  _buildBloodTypeChip('B-'),
-                  _buildBloodTypeChip('AB+'),
-                  _buildBloodTypeChip('AB-'),
-                  _buildBloodTypeChip('O+'),
-                  _buildBloodTypeChip('O-'),
-                ],
-              ),
-              SizedBox(height: 16),
-              Text('Raison'),
-              Wrap(
-                spacing: 8.0,
-                children: <Widget>[
-                  _buildReasonChip('Accident'),
-                  _buildReasonChip('Chirurgie'),
-                  _buildReasonChip('Autre'),
-                  _buildReasonChip('Grossesse'),
-                  _buildReasonChip('Je préfère ne pas le dire'),
-                ],
-              ),
+              _buildFormContainer(),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: Text('Soumettre'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.red,
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildUserInfoContainer() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.lightBlue[200],
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Color(0xFFF9888E)),
+      ),
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _buildUserInfoRow('Nom:', _nameController.text),
+          _buildUserInfoRow('Numéro:', _phoneController.text),
+          _buildUserInfoRow('Âge:', _ageController.text),
+          _buildUserInfoRow('Email:', _emailController.text),
+          _buildUserInfoRow('Ville:', _cityController.text),
+          _buildUserInfoRow('Sexe:', selectedGender ?? ''),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: <Widget>[
+          Text(
+            label,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(width: 8),
+          Text(value),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormContainer() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.lightBlue[200]!),
+      ),
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Titre de l\'annonce'),
+            onSaved: (value) {
+              _title = value;
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Veuillez entrer le titre de l\'annonce';
+              }
+              return null;
+            },
+          ),
+          SizedBox(height: 16),
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Description'),
+            maxLines: 3,
+            onSaved: (value) {
+              _description = value;
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Veuillez entrer la description';
+              }
+              return null;
+            },
+          ),
+          SizedBox(height: 16),
+          Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text.isEmpty) {
+                return const Iterable<String>.empty();
+              }
+              return _healthCenters
+                  .map((center) => center['nom'].toString())
+                  .where((nom) => nom.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+            },
+            onSelected: (String selection) {
+              setState(() {
+                _selectedHealthCenter = selection;
+              });
+            },
+            fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+              return TextFormField(
+                controller: controller,
+                focusNode: focusNode,
+                decoration: InputDecoration(
+                  labelText: 'Centre de santé',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedHealthCenter = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez sélectionner ou entrer un centre de santé';
+                  }
+                  return null;
+                },
+              );
+            },
+          ),
+          SizedBox(height: 16),
+          Text('Type de sang'),
+          Wrap(
+            spacing: 8.0,
+            children: <Widget>[
+              _buildBloodTypeChip('A+'),
+              _buildBloodTypeChip('A-'),
+              _buildBloodTypeChip('B+'),
+              _buildBloodTypeChip('B-'),
+              _buildBloodTypeChip('AB+'),
+              _buildBloodTypeChip('AB-'),
+              _buildBloodTypeChip('O+'),
+              _buildBloodTypeChip('O-'),
+            ],
+          ),
+          SizedBox(height: 16),
+          Text('Raison'),
+          Wrap(
+            spacing: 8.0,
+            children: <Widget>[
+              _buildReasonChip('Accident'),
+              _buildReasonChip('Chirurgie'),
+              _buildReasonChip('Autre'),
+              _buildReasonChip('Grossesse'),
+              _buildReasonChip('Je préfère ne pas le dire'),
+            ],
+          ),
+        ],
       ),
     );
   }
