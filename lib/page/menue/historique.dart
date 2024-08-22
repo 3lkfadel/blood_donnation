@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
-import 'UserDons.dart';
+import 'UserDons.dart'; // Import your UserDons page
 
 class Historique extends StatefulWidget {
   const Historique({super.key});
@@ -15,7 +15,6 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
   List<Map<String, dynamic>> _donsEffectues = [];
   bool _isLoadingDemandes = false;
   bool _isLoadingDons = false;
-  bool _isFetchingDons = false; // Pour empêcher les clics multiples
 
   @override
   void initState() {
@@ -77,12 +76,6 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
   }
 
   Future<void> _fetchDonsForAnnonce(int annonceId) async {
-    if (_isFetchingDons) return; // Empêcher les clics multiples
-
-    setState(() {
-      _isFetchingDons = true;
-    });
-
     try {
       final dons = await ApiService().getDonsForAnnonce(annonceId);
       Navigator.push(
@@ -90,16 +83,12 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
         MaterialPageRoute(
           builder: (context) => UserDons(
             dons: dons,
-            annonceId: annonceId,
+            annonceId: annonceId, // Pass the annonce ID
           ),
         ),
       );
     } catch (e) {
       print('Failed to load dons: $e');
-    } finally {
-      setState(() {
-        _isFetchingDons = false;
-      });
     }
   }
 
@@ -171,46 +160,17 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
               : SingleChildScrollView(
             child: Column(
               children: _demandes.map((demande) {
-                bool isClosed = demande['etat'] == 'inactif';
                 return GestureDetector(
-                  onTap: _isFetchingDons
-                      ? null
-                      : () async {
+                  onTap: () async {
                     await _fetchDonsForAnnonce(demande['id']);
                   },
-                  child: Stack(
-                    children: [
-                      Card(
-                        margin: EdgeInsets.all(8.0),
-                        elevation: 4,
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 100),
-                          curve: Curves.easeInOut,
-                          color: _isFetchingDons ? Colors.grey[50] : Colors.grey[50],
-                          child: ListTile(
-                            title: Text(demande['titre'] ?? 'Sans titre'),
-                            subtitle: Text(demande['description'] ?? 'Aucune description'),
-                            trailing: Text(demande['created_at'] ?? ''),
-                          ),
-                        ),
-                      ),
-                      if (isClosed)
-                        Positioned.fill(
-                          child: Container(
-                            color: Colors.black.withOpacity(0.5),
-                            child: Center(
-                              child: Text(
-                                'Annonce fermée',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                  child: Card(
+                    margin: EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text(demande['titre'] ?? 'Sans titre'),
+                      subtitle: Text(demande['description'] ?? 'Aucune description'),
+                      trailing: Text(demande['created_at'] ?? ''),
+                    ),
                   ),
                 );
               }).toList(),
