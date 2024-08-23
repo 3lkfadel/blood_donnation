@@ -49,8 +49,15 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/siginup': (context) => Siginuppage(),
         '/reset': (context) => Resetpage(),
-        '/reset2': (context) => VerificationPage(),
-        '/reset3': (context) => Resetpassword3(),
+          '/reset2': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+            return VerificationPage(email: args['email']!);
+          },
+          '/reset3': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+            return Resetpassword3(email: args['email']!, code: args['code']!);
+          },
+
         '/selectionsang': (context) => BloodGroupSelectionScreen(),
         '/homepage': (context) => HomePage(),
         '/demande': (context) => BloodDonationFormPage(),

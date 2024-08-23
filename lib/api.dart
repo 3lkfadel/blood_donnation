@@ -445,6 +445,28 @@ class ApiService {
     }
   }
 
+
+  //verifier le code de renitialisation
+  Future<void> verifyResetPasswordCode(String code, String email) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.verify, data: {
+        'code': code,
+        'email': email,
+      });
+      if (response.statusCode == 200) {
+        print('Code de réinitialisation du mot de passe valide');
+      } else {
+        throw Exception(
+            'Échec de vérification du code de réinitialisation du mot de passe: ${response
+                .data['message']}');
+      }
+    } catch (e) {
+      print(
+          'Erreur lors de la vérification du code de réinitialisation du mot de passe: $e');
+      rethrow;
+    }
+  }
+
   //recuperer les publicités
   Future<List<Pub>> getPublicites() async {
     try {
@@ -480,27 +502,28 @@ class ApiService {
           'Erreur lors de l\'envoi du lien de réinitialisation du mot de passe: $e');
       rethrow;
     }
+  }
 
-    //renitialiser le mot de passe
-    Future<void> resetPassword(String code, String email, String password) async {
-      try {
-        final response = await _dio.post(ApiEndpoints.passwordreset, data: {
-          'code': code,
-          'password': password,
-          'email': email,
-        });
-        if (response.statusCode == 200) {
-          print('Mot de passe réinitialisé avec succès');
-        } else {
-          throw Exception(
-              'Échec de la réinitialisation du mot de passe: ${response
-                  .data['message']}');
-        }
-      } catch (e) {
-        print('Erreur lors de la réinitialisation du mot de passe: $e');
-        rethrow;
+  //renitialiser le mot de passe
+  Future<void> resetPassword(String code, String email, String password) async {
+    try {
+      final response = await _dio.post(ApiEndpoints.passwordreset, data: {
+        'code': code,
+        'password': password,
+        'email': email,
+      });
+      if (response.statusCode == 200) {
+        print('Mot de passe réinitialisé avec succès');
+      } else {
+        throw Exception(
+            'Échec de la réinitialisation du mot de passe: ${response
+                .data['message']}');
       }
+    } catch (e) {
+      print('Erreur lors de la réinitialisation du mot de passe: $e');
+      rethrow;
     }
   }
+
 
 }

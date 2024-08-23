@@ -38,7 +38,12 @@ class _ResetpageState extends State<Resetpage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Email de réinitialisation envoyé.')),
       );
-      Navigator.pushNamed(context, '/reset2');
+      // Passez l'email lors de la navigation vers la page de vérification
+      Navigator.pushNamed(
+        context,
+        '/reset2',
+        arguments: {'email': email},
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: ${e.toString()}')),
