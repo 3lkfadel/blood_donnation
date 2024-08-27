@@ -49,7 +49,7 @@ class _VerificationPageState extends State<VerificationPage> {
       Navigator.pushNamed(
         context,
         '/reset3',
-        arguments: {'email': widget.email, 'code': code},
+        arguments: {'email': widget.email},
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

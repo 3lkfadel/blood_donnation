@@ -3,9 +3,8 @@ import 'package:blood_donnation/api.dart';
 
 class Resetpassword3 extends StatefulWidget {
   final String email;
-  final String code;
 
-  const Resetpassword3({super.key, required this.email, required this.code});
+  const Resetpassword3({super.key, required this.email});
 
   @override
   _Resetpassword3State createState() => _Resetpassword3State();
@@ -46,11 +45,11 @@ class _Resetpassword3State extends State<Resetpassword3> {
     });
 
     try {
-      await ApiService().resetPassword(widget.code, widget.email, password);
+      await ApiService().resetPassword(widget.email, password, confirmPassword);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Mot de passe réinitialisé avec succès.')),
       );
-      Navigator.pushNamed(context, '/login');
+       Navigator.pushNamed(context, '/login');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: ${e.toString()}')),

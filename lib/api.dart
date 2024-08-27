@@ -505,12 +505,12 @@ class ApiService {
   }
 
   //renitialiser le mot de passe
-  Future<void> resetPassword(String code, String email, String password) async {
+  Future<void> resetPassword(String email, String password, String passwordConfirmation) async {
     try {
       final response = await _dio.post(ApiEndpoints.passwordreset, data: {
-        'code': code,
         'password': password,
         'email': email,
+        'password_confirmation': passwordConfirmation,
       });
       if (response.statusCode == 200) {
         print('Mot de passe réinitialisé avec succès');

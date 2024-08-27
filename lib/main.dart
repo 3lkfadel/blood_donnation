@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
           },
           '/reset3': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-            return Resetpassword3(email: args['email']!, code: args['code']!);
+            return Resetpassword3(email: args['email']!);
           },
 
         '/selectionsang': (context) => BloodGroupSelectionScreen(),
