@@ -134,73 +134,79 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
       body: TabBarView(
         controller: _tabController,
         children: [
-          _isLoadingDons
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-            child: Column(
-              children: _donsEffectues.map((don) {
-                return Card(
-                  margin: EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text('Demandeur: ${don['annonce']['user']['name']}'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('État: ${don['etat']}'),
-                      ],
+          RefreshIndicator(
+            onRefresh: _fetchUserDons,
+            child: _isLoadingDons
+                ? Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+              child: Column(
+                children: _donsEffectues.map((don) {
+                  return Card(
+                    margin: EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text('Demandeur: ${don['annonce']['user']['name']}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('État: ${don['etat']}'),
+                        ],
+                      ),
+                      trailing: Text(don['created_at'] ?? ''),
                     ),
-                    trailing: Text(don['created_at'] ?? ''),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
-          _isLoadingDemandes
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-            child: Column(
-              children: _demandes.map((demande) {
-                final isInactive = demande['etat'] == 'inactif';
-                return GestureDetector(
-                  onTap: isInactive
-                      ? null
-                      : () async {
-                    await _fetchDonsForAnnonce(demande['id']);
-                  },
-                  child: Stack(
-                    children: [
-                      Card(
-                        margin: EdgeInsets.all(8.0),
-                        child: ListTile(
-                          title: Text(demande['titre'] ?? 'Sans titre'),
-                          subtitle: Text(demande['description'] ?? 'Aucune description'),
-                          trailing: Text(demande['created_at'] ?? ''),
+          RefreshIndicator(
+            onRefresh: _fetchUserDemandes,
+            child: _isLoadingDemandes
+                ? Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+              child: Column(
+                children: _demandes.map((demande) {
+                  final isInactive = demande['etat'] == 'fermé';
+                  return GestureDetector(
+                    onTap: isInactive
+                        ? null
+                        : () async {
+                      await _fetchDonsForAnnonce(demande['id']);
+                    },
+                    child: Stack(
+                      children: [
+                        Card(
+                          margin: EdgeInsets.all(8.0),
+                          child: ListTile(
+                            title: Text(demande['titre'] ?? 'Sans titre'),
+                            subtitle: Text(demande['description'] ?? 'Aucune description'),
+                            trailing: Text(demande['created_at'] ?? ''),
+                          ),
                         ),
-                      ),
-                      if (isInactive)
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'Annonce fermée',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                        if (isInactive)
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'Annonce fermée',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-                );
-              }).toList(),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ],

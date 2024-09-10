@@ -7,7 +7,6 @@ import 'package:blood_donnation/page/Pub/Pub.dart';
 import '../Pub/PublicitesDetailsPage.dart';
 import 'details.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -21,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   List<Pub> _publicites = [];
   String? _userId;
   String? _processingAnnonceId;
+  bool _hasNewNotifications = true;
 
   @override
   void initState() {
@@ -39,7 +39,6 @@ class _HomePageState extends State<HomePage> {
       });
     } catch (e) {
       print('Failed to load announcements: $e');
-
     }
   }
 
@@ -47,14 +46,13 @@ class _HomePageState extends State<HomePage> {
     try {
       final profileData = await _apiService.getProfiles();
       setState(() {
-        _userId = profileData['id'].toString(); // Stocke l'ID de l'utilisateur connecté
+        _userId = profileData['id'].toString();
       });
     } catch (e) {
       print('Erreur lors de la récupération du profil : $e');
     }
   }
 
-  // obtenir les publicites
   Future<void> _fetchPublicites() async {
     try {
       final publicites = await _apiService.getPublicites();
@@ -67,8 +65,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
-  bool _hasNewNotifications = true;
+  Future<void> _refreshData() async {
+    await _fetchAnnouncements();
+    await _fetchPublicites();
+    await _fetchUserProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,43 +121,46 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCarousel(),
-              SizedBox(height: 30),
-              Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildClickableElement(Icons.person, "Voir Mon Profil", '/ProfilePage'),
-                      _buildClickableElement(Icons.add_circle_outline, "Publier Annonce", '/demande'),
-                      _buildClickableElement(Icons.visibility, "Voir Annonce", '/annonce'),
-                    ],
-                  ),
-                 
-              SizedBox(height: 15),
-              Text(
-                "ANNONCE",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildCarousel(),
+                SizedBox(height: 30),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    _buildClickableElement(Icons.person, "Voir Mon Profil", '/ProfilePage'),
+                    _buildClickableElement(Icons.add_circle_outline, "Publier Annonce", '/demande'),
+                    _buildClickableElement(Icons.visibility, "Voir Annonce", '/annonce'),
+                  ],
                 ),
-              ),
-              _announcements.isEmpty
-                  ? Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _announcements.length,
-                itemBuilder: (context, index) {
-                  final annonce = _announcements[index];
-                  final isProcessing = _processingAnnonceId == annonce['id'].toString();
+                SizedBox(height: 15),
+                Text(
+                  "ANNONCE",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                ),
+                _announcements.isEmpty
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _announcements.length,
+                  itemBuilder: (context, index) {
+                    final annonce = _announcements[index];
+                    final isProcessing = _processingAnnonceId == annonce['id'].toString();
 
-                  return Card(
-                    margin:  EdgeInsets.symmetric(vertical: 8.0),
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8.0),
                       color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -228,7 +232,8 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -238,7 +243,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildClickableElement(IconData icon, String text, String routeName) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 7.0),
-      padding: EdgeInsets.all(3.0),
+      padding: EdgeInsets.all(10.0), // Augmenter le padding pour une meilleure apparence
       decoration: BoxDecoration(
         color: Color.fromARGB(121, 239, 19, 19),
         borderRadius: BorderRadius.circular(25.0),
@@ -256,13 +261,15 @@ class _HomePageState extends State<HomePage> {
           Navigator.pushNamed(context, routeName);
         },
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // Centrer le contenu verticalement
           children: [
             Icon(icon, size: 40, color: Color(0x80FFFFFF)),
-            SizedBox(width: 5),
+            SizedBox(height: 5), // Utiliser SizedBox pour l'espacement vertical
             Text(
               text,
+              textAlign: TextAlign.center, // Centrer le texte horizontalement
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 14, // Augmenter la taille de la police pour une meilleure lisibilité
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -277,15 +284,15 @@ class _HomePageState extends State<HomePage> {
     if (_publicites.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
-    const String baseUrl= ApiEndpoints.imageurl;
+    const String baseUrl = ApiEndpoints.imageurl;
 
     return CarouselSlider(
       options: CarouselOptions(
-        height: 200.0,
+        height: 200.0, // Hauteur fixe pour toutes les images
         autoPlay: true,
-        enlargeCenterPage: true,
+        enlargeCenterPage: false, // Désactiver l'agrandissement pour éviter de voir les images suivantes
         aspectRatio: 16 / 9,
-        viewportFraction: 0.8,
+        viewportFraction: 1.0, // Afficher une image complète à la fois
       ),
       items: _publicites.map((publicite) {
         final imageUrl = '$baseUrl${publicite.image}';
@@ -295,25 +302,23 @@ class _HomePageState extends State<HomePage> {
               context,
               MaterialPageRoute(
                 builder: (context) => PubliciteDetailsPage(
-              publicite: publicite,
+                  publicite: publicite,
+                ),
               ),
-            ),
             );
-
           },
           child: Container(
+            width: double.infinity, // Largeur maximale pour occuper tout l'espace disponible
             child: Center(
               child: Image.network(
-                imageUrl, // URL of the ad image
-                fit: BoxFit.cover,
-                width: 1000,
+                imageUrl,
+                fit: BoxFit.cover, // Assure que l'image remplisse le conteneur
+                width: double.infinity, // Largeur maximale pour occuper tout l'espace disponible
               ),
             ),
           ),
         );
       }).toList(),
     );
-
   }
 }
-
