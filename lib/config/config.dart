@@ -1,6 +1,6 @@
 
 class ApiEndpoints {
-  static const String baseUrl = 'http://192.168.11.101:8000/api';
+  static const String baseUrl = 'http://192.168.1.68:8000/api';
   static const String register = '$baseUrl/register';
   static const String login = '$baseUrl/login';
   static const String profile = '$baseUrl/profile';
@@ -12,7 +12,7 @@ class ApiEndpoints {
   static const String mark = '$baseUrl/mark';
   static const String history = '$baseUrl/historiques';
   static const String centre = '$baseUrl/centres';
-  static const String imageurl = 'http://192.168.11.101:8000/storage/';
+  static const String imageurl = 'http://192.168.1.68:8000/storage/';
   static const String don = '$baseUrl/dons';
   static const String verify = '$baseUrl/verify';
 

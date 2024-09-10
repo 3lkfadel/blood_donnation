@@ -25,6 +25,7 @@ class _DetailsState extends State<Details> {
       _announcementFuture = ApiService().getAnnonceByNotification(widget.notificationId!);
     }
   }
+
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri url = Uri.parse('tel:$phoneNumber');
     if (await canLaunchUrl(url)) {
@@ -49,6 +50,9 @@ class _DetailsState extends State<Details> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final buttonWidth = screenWidth * 0.4; // Ajuste la largeur des boutons à 40% de la largeur de l'écran
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 218, 56, 27),
@@ -184,31 +188,34 @@ class _DetailsState extends State<Details> {
                     ),
                     SizedBox(height: 32),
                     // Action Buttons
-                  Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => _makePhoneCall(userPhoneNumber),
-                      child: Text('Appeler'),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Color.fromARGB(255, 218, 56, 27),
-                        textStyle: TextStyle(fontSize: 18),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => _makePhoneCall(userPhoneNumber),
+                          icon: Icon(Icons.phone, color: Colors.white),
+                          label: Text('Appeler', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            minimumSize: Size(buttonWidth, 48), // Taille minimale du bouton
+                            backgroundColor: Color.fromARGB(255, 184, 72, 65), // Couleur moins vive
+                            textStyle: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                        SizedBox(width: 16), // Espace entre les deux boutons
+                        ElevatedButton.icon(
+                          onPressed: () => _sendMessage(userPhoneNumber),
+                          icon: Icon(Icons.message, color: Colors.white),
+                          label: Text('Message', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            minimumSize: Size(buttonWidth, 48), // Taille minimale du bouton
+                            backgroundColor: Color.fromARGB(255, 73, 137, 219), // Couleur moins vive
+                            textStyle: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 16), // Espace entre les deux boutons
-                    ElevatedButton(
-                      onPressed: () => _sendMessage(userPhoneNumber),
-                      child: Text('Message'),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        backgroundColor: Colors.blue,
-                        textStyle: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ],
-                ),
-
                   ],
                 ),
               ),

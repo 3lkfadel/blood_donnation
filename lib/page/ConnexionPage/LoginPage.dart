@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         if (e.response != null && e.response?.data != null) {
           errorMessage = e.response?.data['message'] ?? 'Échec de la connexion.';
         } else {
-          errorMessage = 'Echec de la connexion.';
+          errorMessage = 'Échec de la connexion.';
         }
       } else {
         errorMessage = 'Mot de passe ou email incorrect.';
@@ -56,10 +56,9 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _errorMessage = errorMessage;
       });
-    }
-    finally {
+    } finally {
       setState(() {
-        _isLoading=false;
+        _isLoading = false;
       });
     }
   }
@@ -67,138 +66,149 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9888E) ,
+      backgroundColor: const Color(0xFFF9888E),
       body: Center(
-        child: Container(
-          width: 350,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              // BoxShadow(
-              //   color: Colors.grey.withOpacity(0.5),
-              //   spreadRadius: 5,
-              //   blurRadius: 7,
-              //   offset: const Offset(0, 7),
-              // ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Connexion",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 350, // Limite la largeur maximale du container
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  // BoxShadow(
+                  //   color: Colors.grey.withOpacity(0.5),
+                  //   spreadRadius: 5,
+                  //   blurRadius: 7,
+                  //   offset: const Offset(0, 7),
+                  // ),
+                ],
               ),
-              const SizedBox(height: 15),
-              if (_errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Text(
-                    _errorMessage!,
-                    style: const TextStyle(color: Colors.red),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center, // Centrer horizontalement
+                children: [
+                  const Text(
+                    "Connexion",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              const SizedBox(height: 10),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: 'E-mail',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                  const SizedBox(height: 15),
+                  if (_errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(color: Colors.red),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'L\'email est obligatoire';
-                        } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}').hasMatch(value)) {
-                          return 'Entrez une adresse e-mail valide';
-                        }
-                        return null;
-                      },
                     ),
-                    const SizedBox(height: 15),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'Mot de passe',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Le mot de passe est obligatoire';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 15),
-                    if (_isLoading)
-                      const CircularProgressIndicator()
-                    else
-                      ElevatedButton(
-                        onPressed: _login,
-                        child: const Text(
-                          "Se connecter",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                  const SizedBox(height: 10),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch, // Prend toute la largeur disponible
+                      children: <Widget>[
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'E-mail',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(35),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                         Text("Je suis nouveau"
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/siginup');
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'L\'email est obligatoire';
+                            } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}').hasMatch(value)) {
+                              return 'Entrez une adresse e-mail valide';
+                            }
+                            return null;
                           },
-                          child:  Text("Créer un compte",
-                        style: TextStyle(
-                          color: Colors.lightBlue[200],
-                        ),),
+                        ),
+                        const SizedBox(height: 15),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Mot de passe',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Le mot de passe est obligatoire';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 15),
+                        if (_isLoading)
+                          const CircularProgressIndicator()
+                        else
+                          ElevatedButton(
+                            onPressed: _login,
+                            child: const Text(
+                              "Se connecter",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(35),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Je suis nouveau"),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/siginup');
+                              },
+                              child: Text(
+                                "Créer un compte",
+                                style: TextStyle(
+                                  color: Colors.lightBlue[200],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/reset');
+                              },
+                              child: Text(
+                                "Mot de passe oublié",
+                                style: TextStyle(
+                                  color: Colors.lightBlue[200],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/reset');
-                          },
-                          child:  Text("Mot de passe oublié",
-                        style: TextStyle(
-                          color: Colors.lightBlue[200],
-                        ),),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
