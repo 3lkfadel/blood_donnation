@@ -4,9 +4,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:blood_donnation/api.dart';
 import 'package:blood_donnation/page/Pub/Pub.dart';
 
+import '../../config/Notification.dart';
 import '../Pub/PublicitesDetailsPage.dart';
 import 'details.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   String? _userId;
   String? _processingAnnonceId;
   bool _hasNewNotifications = true;
+  int _unreadNotificationCount = 0; // Store the count of unread notifications
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
     _fetchAnnouncements();
     _fetchUserProfile();
     _fetchPublicites();
+    _checkNewNotifications();
   }
 
   Future<void> _fetchAnnouncements() async {
@@ -69,7 +71,28 @@ class _HomePageState extends State<HomePage> {
     await _fetchAnnouncements();
     await _fetchPublicites();
     await _fetchUserProfile();
+    await _checkNewNotifications();
   }
+
+  Future<void> _checkNewNotifications() async {
+    try {
+      final notificationData = await _apiService.getNotifications();
+
+      // Ensure notificationData is a List of Maps
+      final notifications = (notificationData as List)
+          .map<AppNotification>((json) => AppNotification.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      setState(() {
+        _unreadNotificationCount = notifications.where((notification) => !notification.isRead).length;
+        _hasNewNotifications = _unreadNotificationCount > 0;
+      });
+    } catch (e) {
+      print('Erreur lors de la vérification des notifications : $e');
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -99,18 +122,19 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: Colors.red,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     constraints: BoxConstraints(
-                      minWidth: 8,
-                      minHeight: 8,
+                      minWidth: 16,
+                      minHeight: 16,
                     ),
                     child: Center(
                       child: Text(
-                        '•',
+                        '$_unreadNotificationCount', // Display unread notification count
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -159,6 +183,9 @@ class _HomePageState extends State<HomePage> {
                     final annonce = _announcements[index];
                     final isProcessing = _processingAnnonceId == annonce['id'].toString();
 
+                    // Vérifier si l'utilisateur est l'auteur de l'annonce
+                    final isAuthor = _userId == annonce['user_id'].toString();
+
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 8.0),
                       color: Colors.white,
@@ -174,8 +201,7 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.red, fontWeight: FontWeight.bold),
                         ),
                         title: Text(annonce['titre'] ?? 'Sans titre'),
-                        subtitle: Text(
-                            annonce['description'] ?? 'Aucune description'),
+                        subtitle: Text(annonce['description'] ?? 'Aucune description'),
                         trailing: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -186,19 +212,8 @@ class _HomePageState extends State<HomePage> {
                                   onPressed: isProcessing
                                       ? null
                                       : () async {
-                                    setState(() {
-                                      _processingAnnonceId = annonce['id'].toString();
-                                    });
-
-                                    try {
-                                      await _apiService.createDon(
-                                          annonce['id'], _userId!);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Demande envoyée avec succès.'),
-                                        ),
-                                      );
-
+                                    if (isAuthor) {
+                                      // Si l'utilisateur est l'auteur, afficher les détails
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -206,23 +221,46 @@ class _HomePageState extends State<HomePage> {
                                               Details(annonceId: annonce['id']),
                                         ),
                                       );
-                                    } catch (e) {
-                                      print('Erreur: $e');
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                              'Erreur lors de l\'envoi de la demande.'),
-                                        ),
-                                      );
-                                    } finally {
+                                    } else {
+                                      // Si ce n'est pas l'auteur, créer un don
                                       setState(() {
-                                        _processingAnnonceId = null;
+                                        _processingAnnonceId = annonce['id'].toString();
                                       });
+
+                                      try {
+                                        await _apiService.createDon(
+                                            annonce['id'], _userId!);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Demande envoyée avec succès.'),
+                                          ),
+                                        );
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                Details(annonceId: annonce['id']),
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        print('Erreur: $e');
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                'Erreur lors de l\'envoi de la demande.'),
+                                          ),
+                                        );
+                                      } finally {
+                                        setState(() {
+                                          _processingAnnonceId = null;
+                                        });
+                                      }
                                     }
                                   },
                                   child: isProcessing
                                       ? CircularProgressIndicator()
-                                      : Text("Répondre"),
+                                      : Text(isAuthor ? "Voir Détails" : "Répondre"),
                                 ),
                               ],
                             ),
@@ -232,7 +270,8 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-              ],
+
+            ],
             ),
           ),
         ),

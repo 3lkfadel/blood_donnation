@@ -22,7 +22,7 @@ class Learningpage1 extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.asset(
-                  "assets/learningpage/image3.png",
+                  "assets/learningpage/Icon.png",
                   height: 200,
                 ),
               ),
@@ -32,7 +32,7 @@ class Learningpage1 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Bienvenue sur Don Don Vital",
+                  "Bienvenue sur DonVital",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -40,7 +40,7 @@ class Learningpage1 extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "Bienvenue sur Don Don Vital, l'application dédiée à la facilitation du don de sang. Grâce à notre plateforme, vous pouvez facilement connecter les donneurs et les receveurs de sang. Que vous soyez un donneur souhaitant sauver des vies ou une personne en quête de sang, Don Don Vital est là pour vous.",
+                  "Bienvenue sur DonVital, l'application dédiée à la facilitation du don de sang. Grâce à notre plateforme, vous pouvez facilement connecter les donneurs et les receveurs de sang. Que vous soyez un donneur souhaitant sauver des vies ou une personne en quête de sang, DonVital est là pour vous.",
                   style: TextStyle(
                     fontSize: 15,
                   ),

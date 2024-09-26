@@ -157,17 +157,19 @@ class _AnnoncepageState extends State<Annoncepage> {
               itemCount: _announcements.length,
               itemBuilder: (context, index) {
                 final annonce = _announcements[index];
-                final isProcessing =
-                    _processingAnnonceId == annonce['id'].toString();
+                final isProcessing = _processingAnnonceId == annonce['id'].toString();
+
+                // Vérifier si l'utilisateur est l'auteur de l'annonce
+                final isAuthor = _userId == annonce['user_id'].toString();
 
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8.0),
-                  color: Colors.grey[50],
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 4,
-                  shadowColor: Colors.black.withOpacity(0.25),
+                  elevation: 6,
+                  shadowColor: Colors.black,
                   child: ListTile(
                     leading: Text(
                       annonce['TypeSang'] ?? 'N/A',
@@ -175,8 +177,7 @@ class _AnnoncepageState extends State<Annoncepage> {
                           color: Colors.red, fontWeight: FontWeight.bold),
                     ),
                     title: Text(annonce['titre'] ?? 'Sans titre'),
-                    subtitle: Text(
-                        annonce['description'] ?? 'Aucune description'),
+                    subtitle: Text(annonce['description'] ?? 'Aucune description'),
                     trailing: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -187,19 +188,8 @@ class _AnnoncepageState extends State<Annoncepage> {
                               onPressed: isProcessing
                                   ? null
                                   : () async {
-                                setState(() {
-                                  _processingAnnonceId = annonce['id'].toString();
-                                });
-
-                                try {
-                                  await _apiService.createDon(
-                                      annonce['id'], _userId!);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Demande envoyée avec succès.'),
-                                    ),
-                                  );
-
+                                if (isAuthor) {
+                                  // Si l'utilisateur est l'auteur, afficher les détails
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -207,23 +197,46 @@ class _AnnoncepageState extends State<Annoncepage> {
                                           Details(annonceId: annonce['id']),
                                     ),
                                   );
-                                } catch (e) {
-                                  print('Erreur: $e');
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Erreur lors de l\'envoi de la demande.'),
-                                    ),
-                                  );
-                                } finally {
+                                } else {
+                                  // Si ce n'est pas l'auteur, créer un don
                                   setState(() {
-                                    _processingAnnonceId = null;
+                                    _processingAnnonceId = annonce['id'].toString();
                                   });
+
+                                  try {
+                                    await _apiService.createDon(
+                                        annonce['id'], _userId!);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Demande envoyée avec succès.'),
+                                      ),
+                                    );
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            Details(annonceId: annonce['id']),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    print('Erreur: $e');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Erreur lors de l\'envoi de la demande.'),
+                                      ),
+                                    );
+                                  } finally {
+                                    setState(() {
+                                      _processingAnnonceId = null;
+                                    });
+                                  }
                                 }
                               },
                               child: isProcessing
                                   ? CircularProgressIndicator()
-                                  : Text("Répondre"),
+                                  : Text(isAuthor ? "Voir Détails" : "Répondre"),
                             ),
                           ],
                         ),

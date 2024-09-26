@@ -21,7 +21,7 @@ class Learningpage3 extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.asset(
-                  "assets/learningpage/image3.png",
+                  "assets/learningpage/learn3.png",
                   height: 200,
                 ),
               ),
@@ -31,7 +31,7 @@ class Learningpage3 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "À Qui S'Adresse Don Don Vital ?",
+                  "À Qui S'Adresse DonVital ?",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -39,7 +39,7 @@ class Learningpage3 extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "Don Don Vital s'adresse à tous ceux qui veulent contribuer à sauver des vies. Que vous soyez un donneur de sang régulier, un nouveau donneur souhaitant faire une différence, ou une personne ayant besoin de sang, notre application est faite pour vous. Ensemble, nous pouvons faire une réelle différence dans la vie de nombreuses personnes.",
+                  "DonVital s'adresse à tous ceux qui veulent contribuer à sauver des vies. Que vous soyez un donneur de sang régulier, un nouveau donneur souhaitant faire une différence, ou une personne ayant besoin de sang, notre application est faite pour vous. Ensemble, nous pouvons faire une réelle différence dans la vie de nombreuses personnes.",
                   style: TextStyle(
                     fontSize: 15,
                   ),

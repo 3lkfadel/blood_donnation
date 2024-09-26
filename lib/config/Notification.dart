@@ -17,7 +17,7 @@ class AppNotification {
     return AppNotification(
       titre: json['titre'] as String? ?? "",
       message: json['message'] as String? ?? "",
-      isRead: json['isRead'] as bool? ?? false,
+      isRead: (json['read'] is bool) ? json['read'] as bool : (json['read'] == 1),
       id: json['id'] as int? ?? 0,
       annonceId: json['annonce_id'] as int? ?? 0,
     );

@@ -22,7 +22,7 @@ class Learningpage2 extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.asset(
-                  "assets/learningpage/image2.png",
+                  "assets/learningpage/Learn.png",
                   height: 200,
                 ),
               ),
@@ -32,7 +32,7 @@ class Learningpage2 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  " Pourquoi Don Don Vital ?",
+                  " Pourquoi DonVital ?",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -40,7 +40,7 @@ class Learningpage2 extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "Don Don Vital a été créé pour répondre à un besoin crucial : simplifier le processus de don de sang. Notre application permet de mettre en relation directe les donneurs et les receveurs, assurant ainsi une réponse rapide et efficace aux urgences et aux besoins continus de sang. Nous visons à créer une communauté solidaire et réactive.",
+                  "DonVital a été créé pour répondre à un besoin crucial : simplifier le processus de don de sang. Notre application permet de mettre en relation directe les donneurs et les receveurs, assurant ainsi une réponse rapide et efficace aux urgences et aux besoins continus de sang. Nous visons à créer une communauté solidaire et réactive.",
                   style: TextStyle(
                     fontSize: 15,
                     

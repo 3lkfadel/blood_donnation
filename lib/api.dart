@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:blood_donnation/config/config.dart';
 import 'package:blood_donnation/config/Notification.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 class ApiService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _storage = FlutterSecureStorage();
@@ -32,6 +32,8 @@ class ApiService {
 
   Future<Response> register(String name, String email, String numero,
       String password, String passwordConfirmation) async {
+    // Récupérez le FCM token avant d'envoyer la requête
+    final fcmToken = await FirebaseMessaging.instance.getToken();
     final response = await _dio.post(
       ApiEndpoints.register, // Utiliser l'URL de l'API
       data: {
@@ -40,6 +42,7 @@ class ApiService {
         'telephone': numero,
         'password': password,
         'password_confirmation': passwordConfirmation,
+        'fcm_token': fcmToken,
       },
     );
 
