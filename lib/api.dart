@@ -527,6 +527,18 @@ class ApiService {
       rethrow;
     }
   }
-
+  Future<void> logout() async {
+    try {
+      final response = await _dio.post(ApiEndpoints.logout);
+      if (response.statusCode == 200) {
+        // Supposons que la déconnexion est réussie
+        return;
+      } else {
+        throw Exception('Failed to logout');
+      }
+    } catch (e) {
+      throw Exception('Error logging out: $e');
+    }
+  }
 
 }

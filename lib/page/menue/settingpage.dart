@@ -177,8 +177,19 @@ class SettingPage extends StatelessWidget {
                       children: [
                         Expanded(
                           child: InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/login');
+                            onTap: () async {
+                              try {
+                                await _apiService.logout();  // Appeler l'API de déconnexion
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/login',
+                                      (Route<dynamic> route) => false,  // Rediriger vers la page de login après déconnexion
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Erreur lors de la déconnexion')),
+                                );
+                              }
                             },
                             child: _buildFeatureCard(context, 'Log out', Icons.logout, Colors.red[200]),
                           ),
