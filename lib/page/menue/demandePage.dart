@@ -74,7 +74,7 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
           Navigator.pushReplacementNamed(context, '/nav');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Erreur lors de la publication de l'annonce")),
+            SnackBar(content: Text("Erreur, verifiez et assurer de renseigner toutes les informations")),
           );
         }
       } catch (e) {

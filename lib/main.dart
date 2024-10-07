@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         '/leraningpage2': (context) => Learningpage2(),
         '/leraningpage3': (context) => Learningpage3(),
         '/login': (context) => LoginPage(),
-        '/siginup': (context) => Siginuppage(),
+        '/signup': (context) => Siginuppage(),
         '/reset': (context) => Resetpage(),
           '/reset2': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;

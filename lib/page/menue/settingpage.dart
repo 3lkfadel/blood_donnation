@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:blood_donnation/api.dart';
 import 'package:flutter/widgets.dart';
 
-class SettingPage extends StatelessWidget {
+class SettingPage extends StatefulWidget {
+  @override
+  _SettingPageState createState() => _SettingPageState();
+}
+
+class _SettingPageState extends State<SettingPage> {
   final ApiService _apiService = ApiService();
+  bool _isLoggingOut = false; // Variable pour gérer l'état de la déconnexion
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +53,12 @@ class SettingPage extends StatelessWidget {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications, color: Colors.black),
-            onPressed: () {
-              Navigator.pushNamed(context, '/NotificationPage');
-            },
-          ),
-        ],
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // Code to refresh the profile data
-          // Refresh the FutureBuilder
-          await Future.delayed(Duration(seconds: 1)); // Simulating network delay
+          // Code pour rafraîchir les données
+          await Future.delayed(Duration(seconds: 1)); // Simule un délai réseau
         },
         child: FutureBuilder(
           future: _apiService.getProfile(),
@@ -140,8 +137,8 @@ class SettingPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Blood point'),
-                                Text('Gender'),
+                                Text('Point de dons'),
+                                Text('0'),
                               ],
                             ),
                           ],
@@ -178,20 +175,29 @@ class SettingPage extends StatelessWidget {
                         Expanded(
                           child: InkWell(
                             onTap: () async {
+                              setState(() {
+                                _isLoggingOut = true; // Afficher le chargement
+                              });
                               try {
-                                await _apiService.logout();  // Appeler l'API de déconnexion
+                                await _apiService.logout(); // Appeler l'API de déconnexion
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   '/login',
-                                      (Route<dynamic> route) => false,  // Rediriger vers la page de login après déconnexion
+                                      (Route<dynamic> route) => false, // Rediriger vers la page de connexion
                                 );
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('Erreur lors de la déconnexion')),
                                 );
+                              } finally {
+                                setState(() {
+                                  _isLoggingOut = false; // Cacher le chargement
+                                });
                               }
                             },
-                            child: _buildFeatureCard(context, 'Log out', Icons.logout, Colors.red[200]),
+                            child: _isLoggingOut
+                                ? Center(child: CircularProgressIndicator()) // Afficher le chargement pendant la déconnexion
+                                : _buildFeatureCard(context, 'Se déconnecter', Icons.logout, Colors.red[200]),
                           ),
                         ),
                       ],

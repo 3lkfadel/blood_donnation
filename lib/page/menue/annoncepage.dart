@@ -76,14 +76,7 @@ class _AnnoncepageState extends State<Annoncepage> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/NotificationPage');
-            },
-            icon: Icon(Icons.notifications, color: Colors.black),
-          ),
-        ],
+
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(

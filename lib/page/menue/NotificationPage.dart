@@ -16,7 +16,14 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   void initState() {
     super.initState();
-    _notificationsFuture = ApiService().getNotifications();
+    _loadNotifications();
+  }
+
+  // Function to load notifications
+  Future<void> _loadNotifications() async {
+    setState(() {
+      _notificationsFuture = ApiService().getNotifications();
+    });
   }
 
   @override
@@ -34,32 +41,36 @@ class _NotificationPageState extends State<NotificationPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: FutureBuilder<List<AppNotification>>(
-        future: _notificationsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erreur: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Aucune notification disponible'));
-          } else {
-            final notifications = snapshot.data!;
-            return ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                final notification = notifications[index];
-                return NotificationTile(
-                  title: notification.titre,
-                  content: notification.message,
-                  isRead: notification.isRead,
-                  notificationId: notification.id,
-                  annonceId: notification.annonceId,
-                );
-              },
-            );
-          }
-        },
+      body: RefreshIndicator(
+        onRefresh: _loadNotifications,  // Refresh when pulling down
+        child: FutureBuilder<List<AppNotification>>(
+          future: _notificationsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Erreur: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('Aucune notification disponible'));
+            } else {
+              final notifications = snapshot.data!;
+              return ListView.builder(
+                itemCount: notifications.length,
+                itemBuilder: (context, index) {
+                  final notification = notifications[index];
+                  return NotificationTile(
+                    title: notification.titre,
+                    content: notification.message,
+                    isRead: notification.isRead,
+                    notificationId: notification.id,
+                    annonceId: notification.annonceId,
+                    onRefresh: _loadNotifications,  // Pass refresh function
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }
@@ -71,6 +82,7 @@ class NotificationTile extends StatefulWidget {
   final bool isRead;
   final int notificationId;
   final int annonceId;
+  final VoidCallback onRefresh; // Refresh callback
 
   const NotificationTile({
     Key? key,
@@ -79,6 +91,7 @@ class NotificationTile extends StatefulWidget {
     required this.isRead,
     required this.notificationId,
     required this.annonceId,
+    required this.onRefresh,  // Required refresh callback
   }) : super(key: key);
 
   @override
@@ -115,35 +128,48 @@ class _NotificationTileState extends State<NotificationTile> {
       return;
     }
 
-    // Vérifier si la notification est déjà lue
-    if (!widget.isRead) {
-      setState(() {
-        _isLoading = true;
-      });
+    setState(() {
+      _isLoading = true;
+    });
 
-      try {
-        // Créer le don uniquement si la notification n'est pas encore lue
-        await _apiService.createDon(widget.annonceId, _userId!);
+    try {
+      // Récupérer les détails de l'annonce associée
+      final annonceDetails = await _apiService.getAnnouncementDetails(widget.annonceId);
+      final annonceAuthorId = annonceDetails['user']['id'].toString();
 
+      // Vérification si l'utilisateur est l'auteur de l'annonce
+      if (_userId == annonceAuthorId) {
         // Marquer la notification comme lue dans l'API
         await _apiService.markNotificationAsRead(widget.notificationId);
+        print('auteur de l\'annonce');
+      } else {
+        // Si l'utilisateur n'est pas l'auteur, permettre la création du don
+        if (!widget.isRead) {
+          await _apiService.createDon(widget.annonceId, _userId!);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Demande envoyée avec succès.')),
-        );
-      } catch (e) {
-        print('Erreur: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur lors de l\'envoi de la demande.')),
-        );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
+          // Marquer la notification comme lue dans l'API
+          await _apiService.markNotificationAsRead(widget.notificationId);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Demande envoyée avec succès.')),
+          );
+        }
       }
+
+      // Refresh the notifications after processing
+      widget.onRefresh();
+    } catch (e) {
+      print('Erreur: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de l\'envoi de la demande.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
 
-    // Ouvrir la page de détails (peu importe si la notification est lue ou non)
+    // Ouvrir la page de détails
     Navigator.push(
       context,
       MaterialPageRoute(

@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   String? _userId;
   String? _processingAnnonceId;
   bool _hasNewNotifications = true;
-  int _unreadNotificationCount = 0; // Store the count of unread notifications
+  int _unreadNotificationCount=0; // Store the count of unread notifications
 
   @override
   void initState() {
@@ -76,17 +76,21 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _checkNewNotifications() async {
     try {
-      final notificationData = await _apiService.getNotifications();
+      // Récupérez les notifications depuis l'API, qui renvoie déjà une liste d'objets AppNotification
+      final notifications = await _apiService.getNotifications();
 
-      // Ensure notificationData is a List of Maps
-      final notifications = (notificationData as List)
-          .map<AppNotification>((json) => AppNotification.fromJson(json as Map<String, dynamic>))
-          .toList();
-
-      setState(() {
-        _unreadNotificationCount = notifications.where((notification) => !notification.isRead).length;
-        _hasNewNotifications = _unreadNotificationCount > 0;
-      });
+      // Assurez-vous que notifications est bien une List<AppNotification>
+      if (notifications is List<AppNotification>) {
+        setState(() {
+          _unreadNotificationCount = notifications
+              .where((notification) => !notification.isRead)
+              .length;
+          _hasNewNotifications = _unreadNotificationCount > 0;
+        });
+      } else {
+        // Gérer le cas où les données ne sont pas de type List<AppNotification>
+        print('Les données des notifications ne sont pas au format attendu.');
+      }
     } catch (e) {
       print('Erreur lors de la vérification des notifications : $e');
     }
@@ -100,7 +104,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(""),
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Image.asset('assets/images/Icons/Icon.png'),
@@ -130,7 +134,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: Center(
                       child: Text(
-                        '$_unreadNotificationCount', // Display unread notification count
+                        '$_unreadNotificationCount',
+                        // Display unread notification count
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -160,9 +165,13 @@ class _HomePageState extends State<HomePage> {
                   spacing: 10,
                   runSpacing: 10,
                   children: [
-                    _buildClickableElement(Icons.person, "Voir Mon Profil", '/ProfilePage'),
-                    _buildClickableElement(Icons.add_circle_outline, "Publier Annonce", '/demande'),
-                    _buildClickableElement(Icons.visibility, "Voir Annonce", '/annonce'),
+                    _buildClickableElement(
+                        Icons.person, "Voir Mon Profil", '/ProfilePage'),
+                    _buildClickableElement(
+                        Icons.add_circle_outline, "Publier Annonce",
+                        '/demande'),
+                    _buildClickableElement(
+                        Icons.visibility, "Voir Annonce", '/annonce'),
                   ],
                 ),
                 SizedBox(height: 15),
@@ -181,7 +190,8 @@ class _HomePageState extends State<HomePage> {
                   itemCount: _announcements.length,
                   itemBuilder: (context, index) {
                     final annonce = _announcements[index];
-                    final isProcessing = _processingAnnonceId == annonce['id'].toString();
+                    final isProcessing = _processingAnnonceId ==
+                        annonce['id'].toString();
 
                     // Vérifier si l'utilisateur est l'auteur de l'annonce
                     final isAuthor = _userId == annonce['user_id'].toString();
@@ -201,7 +211,8 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.red, fontWeight: FontWeight.bold),
                         ),
                         title: Text(annonce['titre'] ?? 'Sans titre'),
-                        subtitle: Text(annonce['description'] ?? 'Aucune description'),
+                        subtitle: Text(annonce['description'] ??
+                            'Aucune description'),
                         trailing: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -224,15 +235,18 @@ class _HomePageState extends State<HomePage> {
                                     } else {
                                       // Si ce n'est pas l'auteur, créer un don
                                       setState(() {
-                                        _processingAnnonceId = annonce['id'].toString();
+                                        _processingAnnonceId =
+                                            annonce['id'].toString();
                                       });
 
                                       try {
                                         await _apiService.createDon(
                                             annonce['id'], _userId!);
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
-                                            content: Text('Demande envoyée avec succès.'),
+                                            content: Text(
+                                                'Demande envoyée avec succès.'),
                                           ),
                                         );
 
@@ -240,12 +254,14 @@ class _HomePageState extends State<HomePage> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                Details(annonceId: annonce['id']),
+                                                Details(
+                                                    annonceId: annonce['id']),
                                           ),
                                         );
                                       } catch (e) {
                                         print('Erreur: $e');
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(
                                                 'Erreur lors de l\'envoi de la demande.'),
@@ -260,7 +276,8 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   child: isProcessing
                                       ? CircularProgressIndicator()
-                                      : Text(isAuthor ? "Voir Détails" : "Répondre"),
+                                      : Text(
+                                      isAuthor ? "Voir Détails" : "Répondre"),
                                 ),
                               ],
                             ),
@@ -271,7 +288,7 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
 
-            ],
+              ],
             ),
           ),
         ),
@@ -282,7 +299,8 @@ class _HomePageState extends State<HomePage> {
   Widget _buildClickableElement(IconData icon, String text, String routeName) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 7.0),
-      padding: EdgeInsets.all(10.0), // Augmenter le padding pour une meilleure apparence
+      padding: EdgeInsets.all(10.0),
+      // Augmenter le padding pour une meilleure apparence
       decoration: BoxDecoration(
         color: Color.fromARGB(121, 239, 19, 19),
         borderRadius: BorderRadius.circular(25.0),
@@ -300,7 +318,8 @@ class _HomePageState extends State<HomePage> {
           Navigator.pushNamed(context, routeName);
         },
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Centrer le contenu verticalement
+          mainAxisAlignment: MainAxisAlignment.center,
+          // Centrer le contenu verticalement
           children: [
             Icon(icon, size: 40, color: Color(0x80FFFFFF)),
             SizedBox(height: 5), // Utiliser SizedBox pour l'espacement vertical
@@ -308,7 +327,8 @@ class _HomePageState extends State<HomePage> {
               text,
               textAlign: TextAlign.center, // Centrer le texte horizontalement
               style: TextStyle(
-                fontSize: 14, // Augmenter la taille de la police pour une meilleure lisibilité
+                fontSize: 14,
+                // Augmenter la taille de la police pour une meilleure lisibilité
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -327,9 +347,11 @@ class _HomePageState extends State<HomePage> {
 
     return CarouselSlider(
       options: CarouselOptions(
-        height: 200.0, // Hauteur fixe pour toutes les images
+        height: 200.0,
+        // Hauteur fixe pour toutes les images
         autoPlay: true,
-        enlargeCenterPage: false, // Désactiver l'agrandissement pour éviter de voir les images suivantes
+        enlargeCenterPage: false,
+        // Désactiver l'agrandissement pour éviter de voir les images suivantes
         aspectRatio: 16 / 9,
         viewportFraction: 1.0, // Afficher une image complète à la fois
       ),
@@ -340,19 +362,36 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PubliciteDetailsPage(
-                  publicite: publicite,
-                ),
+                builder: (context) =>
+                    PubliciteDetailsPage(
+                      publicite: publicite,
+                    ),
               ),
             );
           },
           child: Container(
-            width: double.infinity, // Largeur maximale pour occuper tout l'espace disponible
-            child: Center(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover, // Assure que l'image remplisse le conteneur
-                width: double.infinity, // Largeur maximale pour occuper tout l'espace disponible
+            margin: EdgeInsets.symmetric(horizontal: 10.0),
+            // Espace entre les images
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15.0),
+              // Arrondir les bords des images
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26, // Couleur de l'ombre
+                      blurRadius: 8, // Flou de l'ombre
+                      offset: Offset(0, 4), // Décalage de l'ombre
+                    ),
+                  ],
+                ),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  // Assure que l'image remplisse le conteneur
+                  width: double
+                      .infinity, // Largeur maximale pour occuper tout l'espace disponible
+                ),
               ),
             ),
           ),

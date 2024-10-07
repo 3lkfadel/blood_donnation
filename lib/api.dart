@@ -47,6 +47,7 @@ class ApiService {
     );
 
     if (response.statusCode == 201) {
+
       print('Registration successful');
     } else {
       throw Exception('Failed to register: ${response.data['message']}');
@@ -67,6 +68,12 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final responseData = response.data;
+
+        // Check if the user is blocked
+        if (responseData.containsKey('user') && responseData['user']['is_blocked'] == true) {
+          throw Exception('Votre compte a été bloqué. Veuillez contacter l\'administrateur.');
+        }
+
         if (responseData.containsKey('token')) {
           await _storage.write(key: 'auth_token', value: responseData['token']);
           print('Login successful');

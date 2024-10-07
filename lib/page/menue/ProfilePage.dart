@@ -18,8 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final _cityController = TextEditingController();
   String? selectedGender;
   String? selectedCountry;
-  XFile? _localImage; // Pour les images locales
-  String? _networkImageUrl; // Pour les images du réseau
+  XFile? _localImage; // For local images
+  String? _networkImageUrl; // For network images
 
   final ImagePicker _picker = ImagePicker();
   final ApiService _apiService = ApiService();
@@ -45,8 +45,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _loadProfile() async {
     try {
       final profileData = await _apiService.getProfiles();
-      print('Profile data: $profileData');
-
       setState(() {
         _nameController.text = profileData['name'] ?? '';
         _phoneController.text = profileData['telephone'] ?? '';
@@ -58,7 +56,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
         if (profileData['image'] != null) {
           _networkImageUrl = profileData['image'];
-          print('Network Image URL: $_networkImageUrl');
         }
       });
     } catch (e) {
@@ -71,8 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     setState(() {
       _localImage = pickedFile;
-      _networkImageUrl = null; // Réinitialiser lorsque l'utilisateur choisit une nouvelle image
-      print('Local Image Path: ${_localImage?.path}');
+      _networkImageUrl = null; // Reset when a new image is selected
     });
   }
 
@@ -86,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
           name: _nameController.text,
           email: _emailController.text,
           phone: _phoneController.text,
-          imagePath: _localImage?.path, // Envoi du chemin de l'image locale
+          imagePath: _localImage?.path, // Send the local image path
           gender: selectedGender,
           ville: _cityController.text,
           age: _ageController.text,
@@ -97,14 +93,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Profil mis à jour avec succès')),
           );
-        }
-        else if (response.statusCode == 302) {
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Rédirection detecté')),
-          );
-        }else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to update profile: ${response.data['message']}')),
+            SnackBar(content: Text('Échec de la mise à jour : ${response.data['message']}')),
           );
         }
       } catch (e) {
@@ -122,14 +113,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
-        title: Text('Profile'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        title: Text('Profil',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold
+        ),),
+        elevation: 0,
+        backgroundColor: Colors.redAccent,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -143,7 +135,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 GestureDetector(
                   onTap: _pickImage,
                   child: CircleAvatar(
-                    radius: 50,
+                    radius: 60,
+                    backgroundColor: Colors.grey.shade200,
                     backgroundImage: _localImage != null
                         ? FileImage(File(_localImage!.path))
                         : (_networkImageUrl != null
@@ -151,126 +144,145 @@ class _ProfilePageState extends State<ProfilePage> {
                         : AssetImage('assets/images/Utilisateur1.jpg') as ImageProvider),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Text(
                   _nameController.text.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: const TextStyle(
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(_emailController.text),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Nom'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _phoneController,
-                  decoration: InputDecoration(labelText: 'Numero'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _ageController,
-                  decoration: InputDecoration(labelText: 'Age'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your age';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'email necessaire';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _cityController,
-                  decoration: InputDecoration(labelText: 'Ville'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Entrer votre ville';
-                    }
-                    return null;
-                  },
-                ),
-                DropdownButtonFormField<String>(
-                  value: selectedGender,
-                  decoration: InputDecoration(labelText: 'Sexe'),
-                  items: ['Homme', 'Femme', 'Autre']
-                      .map((gender) => DropdownMenuItem(
-                    value: gender,
-                    child: Text(gender),
-                  ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedGender = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'selectionner le sexe';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Pays',
-                    suffixIcon: Icon(Icons.arrow_drop_down),
+                const SizedBox(height: 10),
+                Text(
+                  _emailController.text,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
                   ),
-                  onTap: () {
-                    showCountryPicker(
-                      context: context,
-                      showPhoneCode: false,
-                      onSelect: (Country country) {
-                        setState(() {
-                          selectedCountry = country.name;
-                        });
-                      },
-                    );
-                  },
-                  controller: TextEditingController(
-                    text: selectedCountry,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'selectionner un pays';
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 20),
+                _buildTextField(_nameController, 'Nom'),
+                const SizedBox(height: 16),
+                _buildTextField(_phoneController, 'Numéro'),
+                const SizedBox(height: 16),
+                _buildTextField(_ageController, 'Âge'),
+                const SizedBox(height: 16),
+                _buildTextField(_emailController, 'Email'),
+                const SizedBox(height: 16),
+                _buildTextField(_cityController, 'Ville'),
+                const SizedBox(height: 16),
+                _buildDropdownField('Sexe', selectedGender, ['Homme', 'Femme', 'Autre']),
+                const SizedBox(height: 16),
+                _buildCountryPicker(),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _updateProfile,
-                  child: Text('Save'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: const Text(
+                    'Enregistrer',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Ce champ est requis';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildDropdownField(String label, String? value, List<String> options) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      items: options
+          .map((option) => DropdownMenuItem(
+        value: option,
+        child: Text(option),
+      ))
+          .toList(),
+      onChanged: (newValue) {
+        setState(() {
+          selectedGender = newValue;
+        });
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez sélectionner une option';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildCountryPicker() {
+    return TextFormField(
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: 'Pays',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        suffixIcon: Icon(Icons.arrow_drop_down),
+      ),
+      onTap: () {
+        showCountryPicker(
+          context: context,
+          showPhoneCode: false,
+          onSelect: (Country country) {
+            setState(() {
+              selectedCountry = country.name;
+            });
+          },
+        );
+      },
+      controller: TextEditingController(text: selectedCountry),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez sélectionner un pays';
+        }
+        return null;
+      },
     );
   }
 }

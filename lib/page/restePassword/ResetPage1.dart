@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:blood_donnation/api.dart';
+
 
 class Resetpage extends StatefulWidget {
   const Resetpage({super.key});
@@ -22,6 +24,7 @@ class _ResetpageState extends State<Resetpage> {
   Future<void> _resetPassword() async {
     String email = _emailController.text;
 
+    // Validation de l'email
     if (email.isEmpty || !EmailValidator.validate(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Veuillez entrer un email valide.')),
@@ -44,7 +47,19 @@ class _ResetpageState extends State<Resetpage> {
         '/reset2',
         arguments: {'email': email},
       );
+    } on DioError catch (e) {
+      // Vérifiez le statut de l'erreur
+      if (e.response?.statusCode == 404) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Aucun compte trouvé avec cet email.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur: ${e.message}')),
+        );
+      }
     } catch (e) {
+      // Gestion d'autres erreurs
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: ${e.toString()}')),
       );
@@ -54,7 +69,6 @@ class _ResetpageState extends State<Resetpage> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

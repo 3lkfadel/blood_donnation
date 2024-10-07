@@ -12,9 +12,11 @@ class Historique extends StatefulWidget {
 class _HistoriqueState extends State<Historique> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<Map<String, dynamic>> _demandes = [];
+  List<Map<String, dynamic>> _filteredDemandes = [];
   List<Map<String, dynamic>> _donsEffectues = [];
   bool _isLoadingDemandes = false;
   bool _isLoadingDons = false;
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -22,6 +24,8 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
     _fetchUserDons();
+    _searchController.addListener(
+        _filterDemandes); // Listen for changes in the search bar
   }
 
   void _handleTabSelection() {
@@ -40,6 +44,7 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
       final annonces = await ApiService().getAnnoncesHistory();
       setState(() {
         _demandes = annonces;
+        _filteredDemandes = annonces; // Initialize the filtered list
       });
     } catch (e) {
       print('Failed to load user demandes: $e');
@@ -68,10 +73,21 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
     }
   }
 
+  void _filterDemandes() {
+    String query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredDemandes = _demandes.where((demande) {
+        return (demande['titre']?.toLowerCase().contains(query) ?? false) ||
+            (demande['description']?.toLowerCase().contains(query) ?? false);
+      }).toList();
+    });
+  }
+
   @override
   void dispose() {
     _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
+    _searchController.dispose(); // Dispose the search controller
     super.dispose();
   }
 
@@ -81,16 +97,18 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => UserDons(
-            dons: dons,
-            annonceId: annonceId,
-          ),
+          builder: (context) =>
+              UserDons(
+                dons: dons,
+                annonceId: annonceId,
+              ),
         ),
       );
     } catch (e) {
       print('Failed to load dons: $e');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +162,8 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
                   return Card(
                     margin: EdgeInsets.all(8.0),
                     child: ListTile(
-                      title: Text('Demandeur: ${don['annonce']['user']['name']}'),
+                      title: Text(
+                          'Demandeur: ${don['annonce']['user']['name']}'),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -162,51 +181,75 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
             onRefresh: _fetchUserDemandes,
             child: _isLoadingDemandes
                 ? Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-              child: Column(
-                children: _demandes.map((demande) {
-                  final isInactive = demande['etat'] == 'fermé';
-                  return GestureDetector(
-                    onTap: isInactive
-                        ? null
-                        : () async {
-                      await _fetchDonsForAnnonce(demande['id']);
-                    },
-                    child: Stack(
-                      children: [
-                        Card(
-                          margin: EdgeInsets.all(8.0),
-                          child: ListTile(
-                            title: Text(demande['titre'] ?? 'Sans titre'),
-                            subtitle: Text(demande['description'] ?? 'Aucune description'),
-                            trailing: Text(demande['created_at'] ?? ''),
-                          ),
-                        ),
-                        if (isInactive)
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'Annonce fermée',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Rechercher des demandes',
+                      border: InputBorder.none,
+                      // No border
+                      filled: true,
+                      // Optional: fill the background
+                      fillColor: Colors.grey[200],
+                      // Optional: set a background color
+                      suffixIcon: Icon(Icons.search),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: _filteredDemandes.map((demande) {
+                        final isInactive = demande['etat'] == 'fermé';
+                        return GestureDetector(
+                          onTap: isInactive
+                              ? null
+                              : () async {
+                            await _fetchDonsForAnnonce(demande['id']);
+                          },
+                          child: Stack(
+                            children: [
+                              Card(
+                                margin: EdgeInsets.all(8.0),
+                                child: ListTile(
+                                  title: Text(demande['titre'] ?? 'Sans titre'),
+                                  subtitle: Text(demande['description'] ??
+                                      'Aucune description'),
+                                  trailing: Text(demande['created_at'] ?? ''),
                                 ),
                               ),
-                            ),
+                              if (isInactive)
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 4, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      'Annonce fermée',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                      ],
+                        );
+                      }).toList(),
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
