@@ -126,15 +126,19 @@ class _BloodDonationFormPageState extends State<BloodDonationFormPage> {
         border: Border.all(color: Color(0xFFF9888E)),
       ),
       padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _buildUserInfoRow('Nom:', _nameController.text),
-          _buildUserInfoRow('Numéro:', _phoneController.text),
-          _buildUserInfoRow('Âge:', _ageController.text),
-          _buildUserInfoRow('Email:', _emailController.text),
-          _buildUserInfoRow('Ville:', _cityController.text),
-          _buildUserInfoRow('Sexe:', selectedGender ?? ''),
+      child: Wrap(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildUserInfoRow('Nom:', _nameController.text),
+              _buildUserInfoRow('Numéro:', _phoneController.text),
+              _buildUserInfoRow('Âge:', _ageController.text),
+              _buildUserInfoRow('Email:', _emailController.text),
+              _buildUserInfoRow('Ville:', _cityController.text),
+              _buildUserInfoRow('Sexe:', selectedGender ?? ''),
+            ],
+          ),
         ],
       ),
     );

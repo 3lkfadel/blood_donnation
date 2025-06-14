@@ -129,7 +129,7 @@ class _HistoriqueState extends State<Historique> with SingleTickerProviderStateM
                     ),
                   ),
                   TextSpan(
-                    text: 'TRIQUE',
+                    text: 'RIQUE',
                     style: TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
